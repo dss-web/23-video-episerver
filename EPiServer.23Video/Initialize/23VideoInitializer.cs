@@ -16,18 +16,18 @@ namespace EPiServer._23Video.Initialize
         public void Initialize(Framework.Initialization.InitializationEngine context)
         {
             // Register 23Video IContentData type
-            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoFolder>>();
-            registerFolder.RegisterType();
+            //var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoFolder>>();
+            //registerFolder.RegisterType();
             
             var registerVideo = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoVideo>>();
             registerVideo.RegisterType();
             
             var contentRepository = context.Locate.ContentRepository();
 
-            var entryPoint = contentRepository.GetChildren<_23VideoFolder>(ContentReference.RootPage).FirstOrDefault();
+            var entryPoint = contentRepository.GetChildren<ContentFolder>(ContentReference.RootPage).FirstOrDefault();
             if (entryPoint == null)
             {
-                entryPoint = contentRepository.GetDefault<_23VideoFolder>(ContentReference.RootPage);
+                entryPoint = contentRepository.GetDefault<ContentFolder>(ContentReference.RootPage);
                 entryPoint.Name = "23Video";
                 contentRepository.Save(entryPoint, DataAccess.SaveAction.Publish, Security.AccessLevel.NoAccess);
             }
