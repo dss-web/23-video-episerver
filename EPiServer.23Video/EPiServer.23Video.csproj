@@ -192,6 +192,7 @@
     <Compile Include="Initialize\23VideoInitializer.cs" />
     <Compile Include="Initialize\23VideoProvider.cs" />
     <Compile Include="Models\23VideoVideo.cs" />
+    <Compile Include="Models\23VideoFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\23VideoComponent.cs" />
     <Compile Include="UI\23VideoRepositoryDescriptor.cs" />

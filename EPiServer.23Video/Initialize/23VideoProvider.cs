@@ -44,10 +44,10 @@ namespace EPiServer._23Video.Initialize
         {
             base.Initialize(name, config);
 
-            var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<ContentFolder>().ID, LanguageSelector.AutoDetect()) as ContentFolder;
-            folder.ContentLink = new ContentReference(1, ProviderKey);
-            folder.Name = "Channel";
-            _items.Add(folder);
+            //var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<ContentFolder>().ID, LanguageSelector.AutoDetect()) as ContentFolder;
+            //folder.ContentLink = new ContentReference(999, ProviderKey);
+            //folder.Name = "Channel";
+            //_items.Add(folder);
 
             //folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<YouTubeFolder>().ID, LanguageSelector.AutoDetect()) as YouTubeFolder;
             //folder.ContentLink = new ContentReference(2, ProviderKey);
