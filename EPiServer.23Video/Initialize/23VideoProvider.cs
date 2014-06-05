@@ -3,27 +3,32 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Authentication.ExtendedProtection;
 using System.Web.Helpers;
+using System.Web.UI.WebControls;
 using EPiServer.Core;
+using EPiServer.Data;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
 using EPiServer._23Video.Models;
+using Visual;
+using Visual.Domain;
 
 namespace EPiServer._23Video.Initialize
 {
     public class _23VideoProvider : ContentProvider
     {
         private const string BaseApi = "https://www.googleapis.com/youtube/v3/";
-        
+
         private readonly List<BasicContent> _items = new List<BasicContent>();
         private readonly _23VideoSettingsRepository _settingsRepository;
 
         private readonly IContentTypeRepository _contentTypeRepository;
-        private readonly ContentFolder _entryPoint;
+        private readonly _23VideoFolder _entryPoint;
 
         public _23VideoProvider(IContentTypeRepository contentTypeRepository,
-            ContentFolder entryPoint,
+            _23VideoFolder entryPoint,
             _23VideoSettingsRepository settingsRepository)
         {
             _contentTypeRepository = contentTypeRepository;
@@ -35,9 +40,9 @@ namespace EPiServer._23Video.Initialize
         {
             get { return ContentProviderCapabilities.None; }
             //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
-        
+
         }
-      
+
         #region ContentProvider
 
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
@@ -53,9 +58,22 @@ namespace EPiServer._23Video.Initialize
             //folder.ContentLink = new ContentReference(2, ProviderKey);
             //folder.Name = "Channels";
             //_items.Add(folder);
+
+            List<Album> albums = GetAlbumList();
+
+            foreach (var album in albums)
+            {
+                var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<_23VideoFolder>().ID, LanguageSelector.AutoDetect()) as _23VideoFolder;
+
+                int id = (int)album.AlbumId;
+
+                folder.ContentLink = new ContentReference(id*-1, ProviderKey);
+                folder.Name = album.Title;
+                _items.Add(folder);
+            }
         }
 
-        
+
 
         protected override void SetCacheSettings(ContentReference parentLink, string urlSegment, IEnumerable<MatchingSegmentResult> childrenMatches, CacheSettings cacheSettings)
         {
@@ -68,7 +86,72 @@ namespace EPiServer._23Video.Initialize
 
             return item;
         }
-        
+
+        private List<Photo> GetPhotoList()
+        {
+            // Check that we actually have everything configured
+            IApiProvider apiProvider = _23Client.ApiProvider;
+
+            // Get a list of videos to throw in there
+            List<Photo> photos = GetPhotos(apiProvider);
+
+            return photos;
+
+        }
+
+        private List<Photo> GetPhotos(IApiProvider apiProvider)
+        {
+            const string cacheKey = "PhotoService";
+            //if (Caching.VideoProviderCache.Instance.InnerCache.ContainsKey(cacheKey))
+            //{
+            //    return Caching.VideoProviderCache.Instance.InnerCache.GetValue(cacheKey) as List<Photo>;
+            //}
+
+            List<Photo> result = new List<Photo>();
+            IPhotoService photoService = new PhotoService(apiProvider);
+
+            bool done = false;
+            int page = 1;
+            while (!done)
+            {
+                List<Photo> photos = photoService.GetList(new PhotoListParameters
+                {
+                    IncludeUnpublished = false,
+                    Size = 100,
+                    PageOffset = page++
+                });
+
+                if (photos.Count > 0)
+                    result.AddRange(photos);
+
+                if (photos.Count < 100)
+                    done = true;
+            }
+
+            //Caching.VideoProviderCache.Instance.InnerCache.Add(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
+            return result;
+        }
+
+        private List<Album> GetAlbumList()
+        {
+            // Check that we actually have everything configured
+            IApiProvider apiProvider = _23Client.ApiProvider;
+
+            // Get a list of videos to throw in there
+            List<Album> albums = GetAlbums(apiProvider);
+
+            return albums;
+
+        }
+        private List<Album> GetAlbums(IApiProvider apiProvider)
+        {
+            IAlbumService albumService = new AlbumService(apiProvider);
+
+            return albumService.GetList();
+        }
+
+
+
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
         {
             languageSpecific = false;
@@ -79,8 +162,13 @@ namespace EPiServer._23Video.Initialize
             // Get default YouTube folders
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
                 return _items
-                    .Where(p => p is ContentFolder)
-                    .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(ContentFolder) }).ToList();
+                    .Where(p => p is _23VideoFolder)
+                    .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoFolder) }).ToList();
+
+
+
+            //List<Photo> photos = GetPhotoList();
+
 
 
             //var currentSettings = _settingsRepository.LoadSettings();
@@ -138,11 +226,11 @@ namespace EPiServer._23Video.Initialize
             //        video.VideoId = item.snippet.resourceId.videoId;
             //        video.Name = item.snippet.title;
             //      //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
-                    
-              
+
+
             //        _items.Add(video);
 
-                  
+
             //    }
 
             //    return _items
@@ -152,7 +240,7 @@ namespace EPiServer._23Video.Initialize
 
             return null;
         }
-        
+
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
@@ -161,7 +249,7 @@ namespace EPiServer._23Video.Initialize
 
         }
 
-   
+
 
 
         #endregion

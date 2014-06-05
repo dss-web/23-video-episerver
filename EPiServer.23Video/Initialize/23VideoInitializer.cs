@@ -17,7 +17,7 @@ namespace EPiServer._23Video.Initialize
         public void Initialize(Framework.Initialization.InitializationEngine context)
         {
             // Register 23Video IContentData type
-            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<ContentFolder>>();
+            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoFolder>>();
             registerFolder.RegisterType();
             
             var registerVideo = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoVideo>>();

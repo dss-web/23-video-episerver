@@ -46,16 +46,7 @@ namespace EPiServer._23Video.UI
         {
             get
             {
-                var c = ServiceLocator.Current.GetInstance<IContentLoader>();
-                var roots = c.GetChildren<ContentFolder>(new ContentReference(163));
-                var nextLevel = roots.FirstOrDefault();
-                var roots2 = c.GetChildren<ContentFolder>(nextLevel.ContentLink);
-                foreach (var data in roots2)
-                {
-                    yield return data.ContentLink;
-                }
-
-                //return new List<ContentReference> {  }; 
+                return new List<ContentReference> { ContentReference.RootPage }; 
             }
         }
     }

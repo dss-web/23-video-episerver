@@ -32,10 +32,12 @@ namespace EPiServer._23Video.Admin
         {
             if (!Page.IsPostBack && string.IsNullOrEmpty(Request.QueryString["code"]))
             {
+                Domain.Text = CurrentSettings.Domain;
                 CustomerKey.Text = CurrentSettings.CustomerKey;
                 CustomerSecret.Text = CurrentSettings.CustomerSecret;
                 AccessToken.Text = CurrentSettings.AccessToken;
                 AccessTokenSecret.Text = CurrentSettings.AccessTokenSecret;
+
             }
 
             //if (!string.IsNullOrEmpty(Request.QueryString["code"]))
@@ -65,6 +67,7 @@ namespace EPiServer._23Video.Admin
 
         protected void ButtonSaveSettings_Click(object sender, EventArgs e)
         {
+            CurrentSettings.Domain = Domain.Text.Trim();
             CurrentSettings.CustomerKey = CustomerKey.Text.Trim();
             CurrentSettings.CustomerSecret = CustomerSecret.Text.Trim();
             CurrentSettings.AccessToken = AccessToken.Text.Trim();

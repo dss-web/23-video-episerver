@@ -26,13 +26,15 @@
             <fieldset>
                 <legend>OAuth 2.0 Settings</legend>    
                 <dl>
+                    <dt>Domain</dt>
+                    <dd><asp:TextBox ID="Domain" runat="server" /></dd>
                     <dt>Customer Key</dt>
                     <dd><asp:TextBox ID="CustomerKey" runat="server" /></dd>
                     <dt>Customer Secret</dt>
                     <dd><asp:TextBox ID="CustomerSecret" runat="server" /></dd>
                     <dt>Access token</dt>
                     <dd><asp:TextBox ID="AccessToken" runat="server" /></dd>
-<dt>Access Token Secret</dt>
+                    <dt>Access Token Secret</dt>
                     <dd><asp:TextBox ID="AccessTokenSecret" runat="server" /></dd>
 
                 </dl>

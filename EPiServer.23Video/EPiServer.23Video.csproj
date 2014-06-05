@@ -186,6 +186,7 @@
     <Compile Include="Admin\Authenticate.aspx.designer.cs">
       <DependentUpon>Authenticate.aspx</DependentUpon>
     </Compile>
+    <Compile Include="23Client.cs" />
     <Compile Include="Initialize\23VideoDependencyResolverInitialization.cs" />
     <Compile Include="Initialize\23VideoSettings.cs" />
     <Compile Include="Initialize\23VideoSettingsRepository.cs" />
@@ -203,12 +204,18 @@
     <None Include="modules\_protected\Shell\EPiServer.Shell.UI.zip" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\23-api-dotnet-master\src\23API.csproj">
+      <Project>{de4c51d3-d764-410a-a34c-d6da6eeae35a}</Project>
+      <Name>23API</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Admin\Authenticate.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

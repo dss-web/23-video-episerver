@@ -49,6 +49,15 @@ namespace EPiServer._23Video.Admin {
         protected global::System.Web.UI.WebControls.Panel tabView;
         
         /// <summary>
+        /// Domain control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox Domain;
+        
+        /// <summary>
         /// CustomerKey control.
         /// </summary>
         /// <remarks>

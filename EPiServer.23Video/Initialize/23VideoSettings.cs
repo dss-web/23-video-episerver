@@ -9,6 +9,8 @@ namespace EPiServer._23Video.Initialize
     {
         public Identity Id { get; set; }
 
+        public string Domain { get; set; }
+
         public string CustomerKey { get; set; }
 
         public string CustomerSecret { get; set; }

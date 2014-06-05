@@ -15,7 +15,7 @@ namespace EPiServer._23Video.UI
             Categories = new string[] { "content" };
             Title = "23 video";
             Description = "List content from 23 Video";
-            SortOrder = 900;
+            SortOrder = 1000;
             PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
             Settings.Add(new Setting("repositoryKey", _23VideoRepositoryDescriptor.RepositoryKey));
         }
