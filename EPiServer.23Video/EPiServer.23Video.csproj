@@ -187,6 +187,7 @@
       <DependentUpon>Authenticate.aspx</DependentUpon>
     </Compile>
     <Compile Include="23Client.cs" />
+    <Compile Include="Factory\23VideoFactory.cs" />
     <Compile Include="Initialize\23VideoDependencyResolverInitialization.cs" />
     <Compile Include="Initialize\23VideoSettings.cs" />
     <Compile Include="Initialize\23VideoSettingsRepository.cs" />

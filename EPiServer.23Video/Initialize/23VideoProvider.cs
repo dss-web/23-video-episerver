@@ -11,6 +11,7 @@ using EPiServer.Data;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
+using EPiServer._23Video.Factory;
 using EPiServer._23Video.Models;
 using Visual;
 using Visual.Domain;
@@ -19,8 +20,6 @@ namespace EPiServer._23Video.Initialize
 {
     public class _23VideoProvider : ContentProvider
     {
-        private const string BaseApi = "https://www.googleapis.com/youtube/v3/";
-
         private readonly List<BasicContent> _items = new List<BasicContent>();
         private readonly _23VideoSettingsRepository _settingsRepository;
 
@@ -49,30 +48,29 @@ namespace EPiServer._23Video.Initialize
         {
             base.Initialize(name, config);
 
-            //var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<ContentFolder>().ID, LanguageSelector.AutoDetect()) as ContentFolder;
-            //folder.ContentLink = new ContentReference(999, ProviderKey);
-            //folder.Name = "Channel";
-            //_items.Add(folder);
+            CreateFoldersFromChannels();
+        }
 
-            //folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<YouTubeFolder>().ID, LanguageSelector.AutoDetect()) as YouTubeFolder;
-            //folder.ContentLink = new ContentReference(2, ProviderKey);
-            //folder.Name = "Channels";
-            //_items.Add(folder);
-
-            List<Album> albums = GetAlbumList();
+        private void CreateFoldersFromChannels()
+        {
+            List<Album> albums = _23VideoFactory.GetAlbumList();
 
             foreach (var album in albums)
             {
-                var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<_23VideoFolder>().ID, LanguageSelector.AutoDetect()) as _23VideoFolder;
+                var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<_23VideoFolder>().ID,
+                        LanguageSelector.AutoDetect()) as _23VideoFolder;
 
-                int id = (int)album.AlbumId;
+                if (folder == null) continue;
 
-                folder.ContentLink = new ContentReference(id*-1, ProviderKey);
-                folder.Name = album.Title;
-                _items.Add(folder);
+                if (album.AlbumId != null)
+                {
+                    var id = (int) album.AlbumId;
+                    folder.ContentLink = new ContentReference(id, ProviderKey);
+                    folder.Name = album.Title;
+                    _items.Add(folder);
+                }
             }
         }
-
 
 
         protected override void SetCacheSettings(ContentReference parentLink, string urlSegment, IEnumerable<MatchingSegmentResult> childrenMatches, CacheSettings cacheSettings)
@@ -83,75 +81,9 @@ namespace EPiServer._23Video.Initialize
         protected override IContent LoadContent(ContentReference contentLink, ILanguageSelector languageSelector)
         {
             var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
-
             return item;
         }
-
-        private List<Photo> GetPhotoList()
-        {
-            // Check that we actually have everything configured
-            IApiProvider apiProvider = _23Client.ApiProvider;
-
-            // Get a list of videos to throw in there
-            List<Photo> photos = GetPhotos(apiProvider);
-
-            return photos;
-
-        }
-
-        private List<Photo> GetPhotos(IApiProvider apiProvider)
-        {
-            const string cacheKey = "PhotoService";
-            //if (Caching.VideoProviderCache.Instance.InnerCache.ContainsKey(cacheKey))
-            //{
-            //    return Caching.VideoProviderCache.Instance.InnerCache.GetValue(cacheKey) as List<Photo>;
-            //}
-
-            List<Photo> result = new List<Photo>();
-            IPhotoService photoService = new PhotoService(apiProvider);
-
-            bool done = false;
-            int page = 1;
-            while (!done)
-            {
-                List<Photo> photos = photoService.GetList(new PhotoListParameters
-                {
-                    IncludeUnpublished = false,
-                    Size = 100,
-                    PageOffset = page++
-                });
-
-                if (photos.Count > 0)
-                    result.AddRange(photos);
-
-                if (photos.Count < 100)
-                    done = true;
-            }
-
-            //Caching.VideoProviderCache.Instance.InnerCache.Add(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
-            return result;
-        }
-
-        private List<Album> GetAlbumList()
-        {
-            // Check that we actually have everything configured
-            IApiProvider apiProvider = _23Client.ApiProvider;
-
-            // Get a list of videos to throw in there
-            List<Album> albums = GetAlbums(apiProvider);
-
-            return albums;
-
-        }
-        private List<Album> GetAlbums(IApiProvider apiProvider)
-        {
-            IAlbumService albumService = new AlbumService(apiProvider);
-
-            return albumService.GetList();
-        }
-
-
-
+        
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
         {
             languageSpecific = false;
@@ -159,17 +91,11 @@ namespace EPiServer._23Video.Initialize
             if (!_settingsRepository.ValidateAccessToken())
                 return null;
 
-            // Get default YouTube folders
+           //TODO: Rewrite video logic
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
                 return _items
                     .Where(p => p is _23VideoFolder)
                     .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoFolder) }).ToList();
-
-
-
-            //List<Photo> photos = GetPhotoList();
-
-
 
             //var currentSettings = _settingsRepository.LoadSettings();
 
@@ -244,14 +170,9 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
-
             return content.ContentLink;
-
         }
-
-
-
-
+        
         #endregion
 
         #region Helpers
