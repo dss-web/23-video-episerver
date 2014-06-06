@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -33,7 +34,7 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
-            get { return ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create; }
+            get { return ContentProviderCapabilities.Create; }
             //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
 
         }
@@ -60,7 +61,7 @@ namespace EPiServer._23Video.Initialize
 
                 if (album.AlbumId != null)
                 {
-                    var id = (int) album.AlbumId;
+                    var id = (int)album.AlbumId;
                     folder.ContentLink = new ContentReference(id, ProviderKey);
                     folder.Name = album.Title;
                     _items.Add(folder);
@@ -79,11 +80,11 @@ namespace EPiServer._23Video.Initialize
             var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
             return item;
         }
-        
+
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
         {
             languageSpecific = false;
-           
+
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
                 return _items
                     .Where(p => p is _23VideoFolder)
@@ -104,7 +105,7 @@ namespace EPiServer._23Video.Initialize
 
                     if (item.PhotoId != null)
                     {
-                        int id = (int) (item.PhotoId);
+                        int id = (int)(item.PhotoId);
 
                         video.ContentLink = new ContentReference((id).GetHashCode(), ProviderKey);
                         video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
@@ -116,7 +117,7 @@ namespace EPiServer._23Video.Initialize
                         video.ContentGuid = Guid.NewGuid();
                         video.VideoId = item.PhotoId.ToString();
                         video.Name = item.Title;
-                        
+                        video.BinaryData = GetThumbnail(item);
                         _items.Add(video);
                     }
                 }
@@ -127,13 +128,16 @@ namespace EPiServer._23Video.Initialize
         }
 
 
+
         public override ContentReference Save(IContent content, SaveAction action)
         {
             _23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
 
+            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
             return content.ContentLink;
+
         }
-        
+
         #endregion
 
         #region Helpers
@@ -145,21 +149,18 @@ namespace EPiServer._23Video.Initialize
             return Json.Decode(stringResult);
         }
 
-        private Blob GetThumbnail(string url, Guid guid)
+        private Blob GetThumbnail(Photo item)
         {
             var webClient = new WebClient();
+            var url = "http://" + _23Client._23VideoSettings.Domain + item.Original.Download;
             var imageData = webClient.DownloadData(url);
-
-            //Define a container
-            var container = Blob.GetContainerIdentifier(guid);
-
-            //Uploading a file to a blob
-            var thumbNailBlob = BlobFactory.Instance.CreateBlob(container, ".jpg");
+            string container = item.PhotoId.ToString();
+            var blob = BlobFactory.Instance.GetBlob(new Uri(string.Format("{0}://{1}/{2}/{3}", Blob.BlobUriScheme, Blob.DefaultProvider, container, "original.jpg")));
             using (var stream = new MemoryStream(imageData))
             {
-                thumbNailBlob.Write(stream);
+                blob.Write(stream);
             }
-            return thumbNailBlob;
+            return blob;
         }
 
         #endregion
