@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Authentication.ExtendedProtection;
 using System.Web.Helpers;
-using System.Web.UI.WebControls;
 using EPiServer.Core;
-using EPiServer.Data;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
 using EPiServer._23Video.Factory;
 using EPiServer._23Video.Models;
-using Visual;
 using Visual.Domain;
 
 namespace EPiServer._23Video.Initialize
@@ -37,7 +33,7 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
-            get { return ContentProviderCapabilities.None; }
+            get { return ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create; }
             //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
 
         }
@@ -53,7 +49,7 @@ namespace EPiServer._23Video.Initialize
 
         private void CreateFoldersFromChannels()
         {
-            List<Album> albums = _23VideoFactory.GetAlbumList();
+            List<Album> albums = _23VideoFactory.GetChannelList();
 
             foreach (var album in albums)
             {
@@ -97,9 +93,7 @@ namespace EPiServer._23Video.Initialize
 
             if (content is _23VideoFolder)
             {
-                
-
-                var videos = _23VideoFactory.GetPhotoList(contentLink.ID);
+                var videos = _23VideoFactory.GetVideoList(contentLink.ID);
 
                 foreach (var item in videos)
                 {
@@ -122,7 +116,7 @@ namespace EPiServer._23Video.Initialize
                         video.ContentGuid = Guid.NewGuid();
                         video.VideoId = item.PhotoId.ToString();
                         video.Name = item.Title;
-                        //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
+                        
                         _items.Add(video);
                     }
                 }
@@ -135,6 +129,8 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
+            _23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
+
             return content.ContentLink;
         }
         
