@@ -37,7 +37,7 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
-            get { return ContentProviderCapabilities.None; }
+            get { return ContentProviderCapabilities.Create; }
             //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
 
         }
