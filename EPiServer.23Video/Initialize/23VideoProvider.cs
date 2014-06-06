@@ -97,6 +97,7 @@ namespace EPiServer._23Video.Initialize
 
             if (content is _23VideoFolder)
             {
+                
 
                 var videos = _23VideoFactory.GetPhotoList(contentLink.ID);
 
@@ -107,22 +108,27 @@ namespace EPiServer._23Video.Initialize
                             _contentTypeRepository.Load<_23VideoVideo>().ID, LanguageSelector.AutoDetect()) as
                             _23VideoVideo;
 
-                    video.ContentLink = new ContentReference((item.PhotoId).GetHashCode(), ProviderKey);
-                    video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
-                    video.Changed = video.Created;
-                    video.IsPendingPublish = false;
-                    video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
-                    video.Status = VersionStatus.Published;
-                    video.Id = item.PhotoId.ToString();
-                    video.ContentGuid = Guid.NewGuid();
-                    video.VideoId = item.PhotoId.ToString();
-                    video.Name = item.Title;
-                    //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
-                    _items.Add(video);
+                    if (item.PhotoId != null)
+                    {
+                        int id = (int) (item.PhotoId);
+
+                        video.ContentLink = new ContentReference((id).GetHashCode(), ProviderKey);
+                        video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
+                        video.Changed = video.Created;
+                        video.IsPendingPublish = false;
+                        video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
+                        video.Status = VersionStatus.Published;
+                        video.Id = id.ToString();
+                        video.ContentGuid = Guid.NewGuid();
+                        video.VideoId = item.PhotoId.ToString();
+                        video.Name = item.Title;
+                        //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
+                        _items.Add(video);
+                    }
                 }
             }
             return _items
-               .Where(p => p is _23VideoVideo)
+               .Where(p => p is _23VideoVideo && p.ParentLink.ID.Equals(content.ContentLink.ID))
                .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoVideo) }).ToList();
         }
 
