@@ -1,6 +1,6 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Authenticate.aspx.cs" Inherits="EPiServer._23Video.Admin.Authenticate" %>
 
-<%@ Import assembly="EPiServer.23Video" %>
+
 <%@ Register TagPrefix="episerverui" Namespace="EPiServer.UI.WebControls" Assembly="EPiServer.UI" %>
 <asp:Content ContentPlaceHolderID="MainRegion" runat="server">
     

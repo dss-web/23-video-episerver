@@ -30,6 +30,7 @@ namespace EPiServer._23Video
                     _23VideoSettings.CustomerSecret,
                     _23VideoSettings.AccessToken,
                     _23VideoSettings.AccessTokenSecret, false);
+
             }
             private set { }
 

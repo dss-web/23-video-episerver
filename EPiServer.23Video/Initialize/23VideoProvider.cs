@@ -87,84 +87,43 @@ namespace EPiServer._23Video.Initialize
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
         {
             languageSpecific = false;
-
-            if (!_settingsRepository.ValidateAccessToken())
-                return null;
-
-           //TODO: Rewrite video logic
+           
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
                 return _items
                     .Where(p => p is _23VideoFolder)
                     .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoFolder) }).ToList();
 
-            //var currentSettings = _settingsRepository.LoadSettings();
+            var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
 
-            //// Get Channels
-            //if (contentLink.ID == 1)
-            //{
-            //    // Remove Channel
-            //    _items.RemoveAll(p => p is _23VideoChannel);
+            if (content is _23VideoFolder)
+            {
 
-            //    // Request Channels
-            //    var jsonResult = 
-            //        GetJson(string.Format("{0}playlists?part=snippet&mine=true&access_token={1}",
-            //        BaseApi, currentSettings.AccessToken));
+                var videos = _23VideoFactory.GetPhotoList(contentLink.ID);
 
-            //    foreach (var item in jsonResult.items)
-            //    {
-            //        var playlist = GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()), _contentTypeRepository.Load<YouTubePlaylist>().ID, LanguageSelector.AutoDetect()) as YouTubePlaylist;
-            //        //playlist.ContentLink = new ContentReference(_contentId++, 1, ProviderKey);
-            //        playlist.ContentLink = new ContentReference(((string)item.id).GetHashCode(), ProviderKey);
-            //        playlist.PlaylistId = item.id;
-            //        playlist.Name = item.snippet.title;
-            //        _items.Add(playlist);
-            //    }
+                foreach (var item in videos)
+                {
+                    var video =
+                        GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()),
+                            _contentTypeRepository.Load<_23VideoVideo>().ID, LanguageSelector.AutoDetect()) as
+                            _23VideoVideo;
 
-            //    return _items
-            //        .Where(p => p is YouTubePlaylist)
-            //        .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(YouTubePlaylist) }).ToList();
-            //}
-
-
-            //var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
-
-            //// Get videos for a PlayList
-            //if (content is YouTubePlaylist)
-            //{
-            //    // Request videos
-            //    var jsonResult =
-            //        GetJson(string.Format("{0}playlistItems?part=id%2Csnippet&playlistId={1}&access_token={2}",
-            //        BaseApi,
-            //        ((YouTubePlaylist)content).PlaylistId,
-            //        currentSettings.AccessToken));
-
-            //    foreach (var item in jsonResult.items)
-            //    {
-            //        var video = GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()), _contentTypeRepository.Load<YouTubeVideo>().ID, LanguageSelector.AutoDetect()) as YouTubeVideo;
-            //        //video.ContentLink = new ContentReference(_contentId++, 1, ProviderKey);
-            //        video.ContentLink = new ContentReference(((string)item.snippet.resourceId.videoId).GetHashCode(), ProviderKey);
-            //        video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
-            //        video.Changed = video.Created;
-            //        video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1,0,0,0));
-            //        video.Status = VersionStatus.Published;
-            //        video.Id = item.id;
-            //        video.ContentGuid = Guid.NewGuid();
-            //        video.VideoId = item.snippet.resourceId.videoId;
-            //        video.Name = item.snippet.title;
-            //      //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
-
-
-            //        _items.Add(video);
-
-
-            //    }
-
-            //    return _items
-            //       .Where(p => p is YouTubeVideo)
-            //       .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(YouTubeVideo) }).ToList();
-            //}
-
-            return null;
+                    video.ContentLink = new ContentReference((item.PhotoId).GetHashCode(), ProviderKey);
+                    video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
+                    video.Changed = video.Created;
+                    video.IsPendingPublish = false;
+                    video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
+                    video.Status = VersionStatus.Published;
+                    video.Id = item.PhotoId.ToString();
+                    video.ContentGuid = Guid.NewGuid();
+                    video.VideoId = item.PhotoId.ToString();
+                    video.Name = item.Title;
+                    //  video.BinaryData = GetThumbnail(item.snippet.thumbnails.medium.url, video.ContentGuid);
+                    _items.Add(video);
+                }
+            }
+            return _items
+               .Where(p => p is _23VideoVideo)
+               .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoVideo) }).ToList();
         }
 
 

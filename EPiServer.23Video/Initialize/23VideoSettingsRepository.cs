@@ -41,35 +41,5 @@ namespace EPiServer._23Video.Initialize
             }
             return currentSettings;
         }
-
-        public bool ValidateAccessToken()
-        {
-            var currentSettings = Store.Items<_23VideoSettings>().FirstOrDefault();
-            if (currentSettings == null)
-                return false;
-
-            // Refresh token
-            //if (DateTime.Now.Subtract(currentSettings.TokenCreated).TotalSeconds >= currentSettings.TokenExpires)
-            //{
-            //    var webClient = new WebClient();
-            //    var resultData = webClient.UploadValues("http://api.visualplatform.net/oauth/request_token",
-            //        new NameValueCollection
-            //        {
-            //            { "client_id", currentSettings.ClientId },
-            //            { "client_secret", currentSettings.ClientSecret },
-            //            { "grant_type", "refresh_token" },
-            //            { "refresh_token", currentSettings.RefreshToken }
-            //        });
-            //    var result = Json.Decode(Encoding.UTF8.GetString(resultData));
-
-            //    currentSettings.AccessToken = result.access_token;
-            //    currentSettings.TokenExpires = result.expires_in;
-            //    currentSettings.TokenCreated = DateTime.Now;
-            //    SaveSettings(currentSettings);
-
-            //    return true;
-            //}
-            return true;
-        }
     }
 }

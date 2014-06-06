@@ -16,13 +16,25 @@ namespace EPiServer._23Video.Factory
             IApiProvider apiProvider = _23Client.ApiProvider;
 
             // Get a list of videos to throw in there
-            List<Photo> photos = GetPhotos(apiProvider);
+            List<Photo> photos = GetPhotos(apiProvider, null);
 
             return photos;
 
         }
 
-        private static List<Photo> GetPhotos(IApiProvider apiProvider)
+        public static List<Photo> GetPhotoList(int channelId)
+        {
+            // Check that we actually have everything configured
+            IApiProvider apiProvider = _23Client.ApiProvider;
+
+            // Get a list of videos to throw in there
+            List<Photo> photos = GetPhotos(apiProvider, new PhotoListParameters(){AlbumId = channelId});
+
+            return photos;
+
+        }
+        
+        private static List<Photo> GetPhotos(IApiProvider apiProvider, PhotoListParameters photoListParameters)
         {
             const string cacheKey = "PhotoService";
             //if (Caching.VideoProviderCache.Instance.InnerCache.ContainsKey(cacheKey))
@@ -33,26 +45,21 @@ namespace EPiServer._23Video.Factory
             List<Photo> result = new List<Photo>();
             IPhotoService photoService = new PhotoService(apiProvider);
 
-            bool done = false;
-            int page = 1;
-            while (!done)
+            PhotoListParameters p = photoListParameters;
+            
+            if (photoListParameters == null)
             {
-                List<Photo> photos = photoService.GetList(new PhotoListParameters
-                {
-                    IncludeUnpublished = false,
-                    Size = 100,
-                    PageOffset = page++
-                });
-
-                if (photos.Count > 0)
-                    result.AddRange(photos);
-
-                if (photos.Count < 100)
-                    done = true;
+                p = new PhotoListParameters();
             }
+            
+            p.IncludeUnpublished = false;
+            p.Video = true;
 
+            List<Photo> photos = photoService.GetList(p);
+
+            
             //Caching.VideoProviderCache.Instance.InnerCache.Add(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
-            return result;
+            return photos;
         }
 
         public static List<Album> GetAlbumList()
@@ -66,6 +73,7 @@ namespace EPiServer._23Video.Factory
             return albums;
 
         }
+
         private static List<Album> GetAlbums(IApiProvider apiProvider)
         {
             IAlbumService albumService = new AlbumService(apiProvider);
