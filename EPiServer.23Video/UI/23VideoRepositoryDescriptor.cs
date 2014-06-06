@@ -4,6 +4,7 @@ using System.Linq;
 using EPiServer.Core;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell;
+using EPiServer._23Video.Models;
 
 namespace EPiServer._23Video.UI
 {
@@ -27,13 +28,21 @@ namespace EPiServer._23Video.UI
 
         public override IEnumerable<Type> ContainedTypes
         {
-            get { return new Type[] { typeof(IContent) }; }
+            get { return new Type[] { typeof(_23VideoVideo) }; }
         }
+
 
         public override IEnumerable<Type> MainNavigationTypes
         {
-            get { return new Type[] { typeof(IContent) }; }
+            get
+            {
+                return (IEnumerable<Type>)new Type[2]
+        {
+          typeof (ContentFolder), typeof(IContent)
+        };
+            }
         }
+
 
         public override int SortOrder
         {
@@ -46,7 +55,27 @@ namespace EPiServer._23Video.UI
         {
             get
             {
-                return new List<ContentReference> { ContentReference.RootPage }; 
+                var children =
+    ServiceLocator.Current.GetInstance<IContentRepository>()
+        .GetChildren<_23VideoFolder>(ContentReference.RootPage);
+
+                foreach (var folder in children)
+                {
+                    yield return folder.ContentLink;
+                }
+            }
+        }
+
+        public override IEnumerable<string> PreventContextualContentFor
+        {
+            get
+            {
+                return (IEnumerable<string>)new string[3]
+        {
+          ContentReference.RootPage.ToString(),
+          ContentReference.WasteBasket.ToString(),
+          "3"
+        };
             }
         }
     }

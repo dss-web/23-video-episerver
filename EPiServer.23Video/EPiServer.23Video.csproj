@@ -147,6 +147,7 @@
       <HintPath>..\..\..\EPiServer\MyEPiServerSite3\wwwroot\packages\structuremap.2.6.4.1\lib\net40\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -179,6 +180,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="23Client.cs" />
     <Compile Include="Admin\Authenticate.aspx.cs">
       <DependentUpon>Authenticate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -186,7 +188,7 @@
     <Compile Include="Admin\Authenticate.aspx.designer.cs">
       <DependentUpon>Authenticate.aspx</DependentUpon>
     </Compile>
-    <Compile Include="23Client.cs" />
+    <Compile Include="Controllers\23VideoController.cs" />
     <Compile Include="Factory\23VideoFactory.cs" />
     <Compile Include="Initialize\23VideoDependencyResolverInitialization.cs" />
     <Compile Include="Initialize\23VideoSettings.cs" />
@@ -206,12 +208,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="References\" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Admin\Authenticate.aspx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

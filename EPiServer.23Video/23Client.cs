@@ -24,6 +24,7 @@ namespace EPiServer._23Video
         {
             get
             {
+               // return null;
                 //TODO: Move default values to app settings if needed.
                 return new ApiProvider(_23VideoSettings.Domain ?? "dss_test.23video.com",
                     _23VideoSettings.CustomerKey,

@@ -14,8 +14,13 @@ namespace EPiServer._23Video.Initialize
     [ModuleDependency(typeof(Web.InitializationModule))]
     public class _23VideoInitializer : IInitializableModule
     {
+
+        protected Injected<_23VideoSettingsRepository> _23VideoSettingsRepository { get; set; } 
+
         public void Initialize(Framework.Initialization.InitializationEngine context)
         {
+            //if(_23Client.ApiProvider == null)
+            //   return;
             // Register 23Video IContentData type
             var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<_23VideoFolder>>();
             registerFolder.RegisterType();
@@ -39,6 +44,8 @@ namespace EPiServer._23Video.Initialize
             providerValues.Add(ContentProviderElement.CapabilitiesString, ContentProviderElement.FullSupportString);
 
             var productProvider = new _23VideoProvider(context.Locate.ContentTypeRepository(), entryPoint, ServiceLocator.Current.GetInstance< _23VideoSettingsRepository>());
+
+
             productProvider.Initialize("23Video", providerValues);
 
             var providerManager = context.Locate.Advanced.GetInstance<IContentProviderManager>();
