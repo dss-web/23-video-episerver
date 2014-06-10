@@ -202,7 +202,13 @@
     <Compile Include="UI\23VideoRepositoryDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="twentythree.lang.twentythree.xml" />
     <None Include="app.config" />
+    <Content Include="ClientResources\Scripts\Components\TwentyThreeVideo.js" />
+    <Content Include="ClientResources\Scripts\Components\TwentyThreeVideoViewModel.js" />
+    <None Include="ClientResources\module.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="modules\_protected\CMS\EPiServer.Cms.Shell.UI.zip" />
     <None Include="modules\_protected\Shell\EPiServer.Shell.UI.zip" />
     <None Include="packages.config" />

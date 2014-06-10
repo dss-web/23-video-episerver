@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<languages>
+  <language name="English" id="en">
+    <twentythreevideo>
+          <media>
+            <command>
+              <openineditor>Open in Image Editor</openineditor>
+              <label>Upload files</label>
+              <download>Download</download>
+            </command>
+            <description>Media management</description>
+            <dropareatitle>Upload videos by dropping them here or click to browse</dropareatitle>
+            <linktocreateitem>Upload videos</linktocreateitem>
+            <nocontent>This folder does not contain any media</nocontent>
+            <title>Media</title>
+            <translationfailedmessage>Failed to translate the content "{0}". You might not have access rights for this action.</translationfailedmessage>
+            <validation>
+              <accessdenied>Access denied</accessdenied>
+              <fileexists>The file "{0}" already exists</fileexists>
+              <missingfileextension>The file "{0}" has no file extension</missingfileextension>
+              <nocontenttype>There is no content type associated with the "{0}" file extension.</nocontenttype>
+              <nocreatepermission>You do not have access rights to upload this type of file.</nocreatepermission>
+            </validation>
+          </media>
+      <components>
+        <categories>
+          <content>Content</content>
+        </categories>
+      </components>
+    </twentythreevideo>
+  </language>
+</languages>
