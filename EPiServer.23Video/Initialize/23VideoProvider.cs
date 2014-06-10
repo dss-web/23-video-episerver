@@ -12,6 +12,7 @@ using EPiServer.Data;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
+using EPiServer.Web;
 using EPiServer._23Video.Factory;
 using EPiServer._23Video.Models;
 using Visual;
@@ -79,10 +80,15 @@ namespace EPiServer._23Video.Initialize
             //cacheSettings.CacheKeys.Add(EPiServer.DataFactoryCache.PageCommonCacheKey(new ContentReference(contentReference.ID)));
         }
 
+        protected override ContentResolveResult ResolveContent(ContentReference contentLink)
+        {
+            return base.ResolveContent(contentLink);
+        }
+
         protected override IContent LoadContent(ContentReference contentLink, ILanguageSelector languageSelector)
         {
             var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
-            return item;
+            return item; 
         }
 
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
@@ -137,7 +143,18 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
-            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+            //   BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+
+
+            var contentId = content.ContentLink.ID;
+            if (contentId == 0)
+            {
+                // content does not exist. Get new ID from 23 video
+
+
+
+            }
+
             return content.ContentLink;
 
         }
@@ -154,15 +171,20 @@ namespace EPiServer._23Video.Initialize
         }
 
         private Blob GetThumbnail(Photo item)
-        {
-            var webClient = new WebClient();
-            var url = "http://" + _23Client._23VideoSettings.Domain + item.Original.Download;
-            var imageData = webClient.DownloadData(url);
+        { 
             string container = item.PhotoId.ToString();
             var blob = BlobFactory.Instance.GetBlob(new Uri(string.Format("{0}://{1}/{2}/{3}", Blob.BlobUriScheme, Blob.DefaultProvider, container, "original.jpg")));
-            using (var stream = new MemoryStream(imageData))
+
+            if (blob.OpenRead().Length == 0)
             {
-                blob.Write(stream);
+                var webClient = new WebClient();
+                var url = "http://" + _23Client._23VideoSettings.Domain + item.Original.Download;
+                var imageData = webClient.DownloadData(url);
+                using (var stream = new MemoryStream(imageData))
+                {
+                    blob.Write(stream);
+                }
+
             }
             return blob;
         }
