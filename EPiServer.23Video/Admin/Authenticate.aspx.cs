@@ -4,23 +4,25 @@ using System.Net;
 using System.Text;
 using System.Web.Helpers;
 using System.Web.UI;
+using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer.PlugIn;
 using EPiServer.ServiceLocation;
 using EPiServer.Shell;
+using EPiServer.Shell.WebForms;
 using EPiServer.Web;
-using EPiServer._23Video.Initialize;
+using EPiCode.TwentyThreeVideo.Initialize;
 using PlugInArea = EPiServer.PlugIn.PlugInArea;
 
-namespace EPiServer._23Video.Admin
+namespace EPiCode.TwentyThreeVideo.Admin
 {
     [GuiPlugIn(
         DisplayName = "23 Video", 
         Description = "Save settings for 23 Video in DDS",
         Area = PlugInArea.AdminMenu, Url = "~/Admin/Authenticate.aspx")]
         //UrlFromModuleFolder = "Admin/Authenticate.aspx")]
-    public partial class Authenticate : Shell.WebForms.WebFormsBase
+    public partial class Authenticate : WebFormsBase
     {
-        private _23VideoSettings _currentSettings;
+        private Settings _currentSettings;
 
         protected override void OnPreInit(EventArgs e)
         {
@@ -76,12 +78,12 @@ namespace EPiServer._23Video.Admin
             SettingsRepository.Service.SaveSettings(CurrentSettings);
         }
 
-        protected _23VideoSettings CurrentSettings
+        protected Settings CurrentSettings
         {
             get { return _currentSettings ?? (_currentSettings = SettingsRepository.Service.LoadSettings()); }
         }
 
-        public Injected<_23VideoSettingsRepository> SettingsRepository { get; set; }
+        public Injected<SettingsRepository> SettingsRepository { get; set; }
 
         protected string GetRedirectUri()
         {

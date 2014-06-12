@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EPiServer.23Video")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("EPiCode.23Video")]
+[assembly: AssemblyDescription("23Video Content Provider for EPiServer")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("EPiServer.23Video")]
+[assembly: AssemblyCompany("BVNetwork AS")]
+[assembly: AssemblyProduct("EPiCode.23Video")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
