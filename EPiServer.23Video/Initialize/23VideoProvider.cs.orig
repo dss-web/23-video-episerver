@@ -11,7 +11,6 @@ using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
 using EPiServer._23Video.Factory;
 using EPiServer._23Video.Models;
-using EPiServer._23Video.UI;
 using Visual.Domain;
 
 namespace EPiServer._23Video.Initialize
@@ -35,7 +34,11 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
-            get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }
+<<<<<<< HEAD
+            get { return ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create; }
+=======
+            get { return ContentProviderCapabilities.Create; }
+>>>>>>> 927bfa5d5f87d939a5222951fe2c3644c20357f9
             //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
 
         }
@@ -95,7 +98,13 @@ namespace EPiServer._23Video.Initialize
 
             if (content is _23VideoFolder)
             {
+<<<<<<< HEAD
                 var videos = _23VideoFactory.GetVideoList(contentLink.ID);
+=======
+
+
+                var videos = _23VideoFactory.GetPhotoList(contentLink.ID);
+>>>>>>> 927bfa5d5f87d939a5222951fe2c3644c20357f9
 
                 foreach (var item in videos)
                 {
@@ -118,7 +127,11 @@ namespace EPiServer._23Video.Initialize
                         video.ContentGuid = Guid.NewGuid();
                         video.VideoId = item.PhotoId.ToString();
                         video.Name = item.Title;
+<<<<<<< HEAD
+                        
+=======
                         video.BinaryData = GetThumbnail(item);
+>>>>>>> 927bfa5d5f87d939a5222951fe2c3644c20357f9
                         _items.Add(video);
                     }
                 }
@@ -132,28 +145,14 @@ namespace EPiServer._23Video.Initialize
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
+<<<<<<< HEAD
+            _23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
 
-            //_23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
-            var mediaData = content as MediaData;
+=======
+            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+>>>>>>> 927bfa5d5f87d939a5222951fe2c3644c20357f9
+            return content.ContentLink;
 
-            if (mediaData != null && mediaData.BinaryData != null)
-            {
-                Blob blobData = ((MediaData) content).BinaryData;
-
-                using (var stream = blobData.OpenRead())
-                {
-                    int? videoId = _23VideoFactory.UploadVideo(content.Name, stream, content.ParentLink.ID);
-
-                    if (videoId != null)
-                    {
-                        BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-
-                        // We can not return the link to the new content since it will take some time to generate it.
-                        return content.ParentLink;
-                    }
-                }
-            }
-            return ContentReference.StartPage;
         }
 
         #endregion

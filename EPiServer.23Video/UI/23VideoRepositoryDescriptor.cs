@@ -11,6 +11,10 @@ namespace EPiServer._23Video.UI
     [ServiceConfiguration(typeof(IContentRepositoryDescriptor))]
     public class _23VideoRepositoryDescriptor : ContentRepositoryDescriptorBase
     {
+        public static string ProvideKeyValue
+        {
+            get { return "23Video"; }
+        }
         public static string RepositoryKey
         {
             get { return "23video"; }

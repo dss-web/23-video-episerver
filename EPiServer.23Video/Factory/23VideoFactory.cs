@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Security.Authentication.ExtendedProtection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls;
@@ -42,8 +44,7 @@ namespace EPiServer._23Video.Factory
             //{
             //    return Caching.VideoProviderCache.Instance.InnerCache.GetValue(cacheKey) as List<Photo>;
             //}
-
-            List<Photo> result = new List<Photo>();
+            
             IPhotoService photoService = new PhotoService(apiProvider);
 
             PhotoListParameters p = photoListParameters;
@@ -65,17 +66,28 @@ namespace EPiServer._23Video.Factory
 
         public static void UpdateVideo(Photo photo)
         {
-            IApiProvider apiProvider = _23Client.ApiProvider;
-
             IPhotoService service = new PhotoService(_23Client.ApiProvider);
 
             if (service.Update((int) photo.PhotoId, title: photo.Title) == false)
             {
                 // saved failed.
             }
+        }
 
+        public static int? UploadVideo(string filename, Stream stream, int channel)
+        {
+            IPhotoService service = new PhotoService(_23Client.ApiProvider);
 
+            string fileExtention = Path.GetExtension(filename);
 
+            if (fileExtention == null)
+            {
+                //TODO: Choose a default extention if missing.
+                //default extention if missing
+                fileExtention = ".mp4";
+            }
+
+            return service.Upload(filename: filename, fileContentType: fileExtention.TrimStart('.'), filestream: stream, albumId:channel, title:filename);
         }
 
         public static List<Album> GetChannelList()
