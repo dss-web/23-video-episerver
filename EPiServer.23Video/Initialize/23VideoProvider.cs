@@ -8,6 +8,7 @@ using System.Web.Helpers;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
+using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer._23Video.Factory;
 using EPiServer._23Video.Models;
@@ -23,14 +24,18 @@ namespace EPiServer._23Video.Initialize
 
         private readonly IContentTypeRepository _contentTypeRepository;
         private readonly _23VideoFolder _entryPoint;
+        private readonly ThumbnailManager _thumbnailManager;
 
         public _23VideoProvider(IContentTypeRepository contentTypeRepository,
+            ThumbnailManager thumbnailManager,
             _23VideoFolder entryPoint,
             _23VideoSettingsRepository settingsRepository)
         {
             _contentTypeRepository = contentTypeRepository;
             _entryPoint = entryPoint;
             _settingsRepository = settingsRepository;
+            _thumbnailManager = thumbnailManager;
+
         }
 
         public override ContentProviderCapabilities ProviderCapabilities
@@ -78,7 +83,8 @@ namespace EPiServer._23Video.Initialize
 
         protected override IContent LoadContent(ContentReference contentLink, ILanguageSelector languageSelector)
         {
-            var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
+            var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink)); //?? _23VideoFactory.GetVideo(contentLink.ID) as ICo;
+
             return item;
         }
 
@@ -103,30 +109,52 @@ namespace EPiServer._23Video.Initialize
                         GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()),
                             _contentTypeRepository.Load<_23VideoVideo>().ID, LanguageSelector.AutoDetect()) as
                             _23VideoVideo;
-
-                    if (item.PhotoId != null)
-                    {
-                        int id = (int)(item.PhotoId);
-
-                        video.ContentLink = new ContentReference((id).GetHashCode(), ProviderKey);
-                        video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
-                        video.Changed = video.Created;
-                        video.IsPendingPublish = false;
-                        video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
-                        video.Status = VersionStatus.Published;
-                        video.Id = id.ToString();
-                        video.ContentGuid = Guid.NewGuid();
-                        video.VideoId = item.PhotoId.ToString();
-                        video.Name = item.Title;
-                        video.BinaryData = GetThumbnail(item);
-                        _items.Add(video);
-                    }
+                    PopulateVideo(video, item);
+                    _items.Add(video);
                 }
             }
             return _items
                .Where(p => p is _23VideoVideo && p.ParentLink.ID.Equals(content.ContentLink.ID))
                .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(_23VideoVideo) }).ToList();
         }
+
+        public _23VideoVideo PopulateVideo(_23VideoVideo video, Photo item)
+        {
+            if (item.PhotoId != null)
+            {
+                int id = (int)(item.PhotoId);
+                video.VideoUrl = EmbedCode(item.PhotoId.ToString(), item.Token, item.VideoHD.Width ?? item.VideoMedium.Width ?? item.VideoSmall.Width, item.VideoHD.Height ?? item.VideoMedium.Height ?? item.VideoSmall.Height);
+                video.ContentLink = new ContentReference((id).GetHashCode(), ProviderKey);
+                video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
+                video.Changed = video.Created;
+                video.IsPendingPublish = false;
+                video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
+                video.Status = VersionStatus.Published;
+                video.Id = id.ToString();
+                video.ContentGuid = Guid.NewGuid();
+                video.VideoId = item.PhotoId.ToString();
+                video.Name = item.Title;
+                //video.BinaryDataContainer =
+                //    new Uri(string.Format("{0}://{1}/{2}", Blob.BlobUriScheme, Blob.DefaultProvider,
+                //        item.PhotoId));
+                video.BinaryData = GetThumbnail(item);
+                video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData,"thumbnail",new ImageDescriptorAttribute(48,48));
+            }
+            return video;
+        }
+
+        public static string EmbedCode(string photoId, string photoToken, int? width, int? height)
+        {
+            string domain = _23Client._23VideoSettings.Domain;
+
+            string widthString = width.ToString();
+
+            string heightString = (height == null ? Math.Round(width.Value / 16.0 * 9.0).ToString() : height.Value.ToString());
+
+            return "<iframe src=\"http://" + domain + "/v.ihtml?token=" + photoToken + "&photo%5fid=" + photoId + "\" width=\"" + widthString + "\" height=\"" + heightString + "\" frameborder=\"0\" border=\"0\" scrolling=\"no\"></iframe>";
+
+        }
+
 
 
 
@@ -138,22 +166,28 @@ namespace EPiServer._23Video.Initialize
 
             if (mediaData != null && mediaData.BinaryData != null)
             {
-                Blob blobData = ((MediaData) content).BinaryData;
+                Blob blobData = ((MediaData)content).BinaryData;
 
                 using (var stream = blobData.OpenRead())
                 {
                     int? videoId = _23VideoFactory.UploadVideo(content.Name, stream, content.ParentLink.ID);
-
                     if (videoId != null)
                     {
                         BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                        var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+      _contentTypeRepository.Load<_23VideoVideo>().ID, LanguageSelector.AutoDetect()) as
+      _23VideoVideo;
 
-                        // We can not return the link to the new content since it will take some time to generate it.
-                        return content.ParentLink;
+                        var item = _23VideoFactory.GetVideo((int)videoId);
+                        PopulateVideo(video, item);
+                      
+                        _items.Add(video);
+                        return video.ContentLink;
+
                     }
                 }
             }
-            return ContentReference.StartPage;
+            return ContentReference.EmptyReference;
         }
 
         #endregion
@@ -165,6 +199,7 @@ namespace EPiServer._23Video.Initialize
             var webClient = new WebClient();
             var stringResult = webClient.DownloadString(url);
             return Json.Decode(stringResult);
+
         }
 
         private Blob GetThumbnail(Photo item)

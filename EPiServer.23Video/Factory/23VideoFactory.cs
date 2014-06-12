@@ -36,6 +36,12 @@ namespace EPiServer._23Video.Factory
             return photos;
 
         }
+
+        public static Photo GetVideo(int videoId)
+        {
+            IPhotoService photoService = new PhotoService(_23Client.ApiProvider);
+            return photoService.Get(videoId, true);
+        }
         
         private static List<Photo> GetVideos(IApiProvider apiProvider, PhotoListParameters photoListParameters)
         {
@@ -45,6 +51,8 @@ namespace EPiServer._23Video.Factory
             //    return Caching.VideoProviderCache.Instance.InnerCache.GetValue(cacheKey) as List<Photo>;
             //}
             
+
+          
             IPhotoService photoService = new PhotoService(apiProvider);
 
             PhotoListParameters p = photoListParameters;
@@ -54,7 +62,7 @@ namespace EPiServer._23Video.Factory
                 p = new PhotoListParameters();
             }
             
-            p.IncludeUnpublished = false;
+            p.IncludeUnpublished = true;
             p.Video = true;
 
             List<Photo> photos = photoService.GetList(p);
@@ -85,7 +93,7 @@ namespace EPiServer._23Video.Factory
                 //TODO: Choose a default extention if missing.
                 //default extention if missing
                 fileExtention = ".mp4";
-            }
+            }  
 
             return service.Upload(filename: filename, fileContentType: fileExtention.TrimStart('.'), filestream: stream, albumId:channel, title:filename);
         }

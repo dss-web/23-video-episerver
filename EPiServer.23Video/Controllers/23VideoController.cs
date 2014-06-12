@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using EPiServer.Web;
+using EPiServer.Web.Mvc;
 using EPiServer._23Video.Models;
 
 namespace EPiServer._23Video.Controllers
@@ -13,7 +14,15 @@ namespace EPiServer._23Video.Controllers
     {
         public ActionResult Index(_23VideoVideo currentContent)
         {
-            return null;
+            return View(currentContent);
+        }
+    }
+
+    public class _23VideoPartialController : PartialContentController<_23VideoVideo>
+    {
+        public override ActionResult Index(_23VideoVideo currentContent)
+        {
+            return PartialView(currentContent);
         }
     }
 }

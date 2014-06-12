@@ -43,7 +43,7 @@ namespace EPiServer._23Video.Initialize
             providerValues.Add(ContentProviderElement.EntryPointString, entryPoint.ContentLink.ID.ToString());
             providerValues.Add(ContentProviderElement.CapabilitiesString, ContentProviderElement.FullSupportString);
 
-            var productProvider = new _23VideoProvider(context.Locate.ContentTypeRepository(), entryPoint, ServiceLocator.Current.GetInstance< _23VideoSettingsRepository>());
+            var productProvider = new _23VideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance< ThumbnailManager>(), entryPoint, ServiceLocator.Current.GetInstance<_23VideoSettingsRepository>());
 
 
             productProvider.Initialize("23Video", providerValues);

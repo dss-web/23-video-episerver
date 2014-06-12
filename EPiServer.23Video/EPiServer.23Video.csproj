@@ -212,6 +212,7 @@
     <None Include="modules\_protected\CMS\EPiServer.Cms.Shell.UI.zip" />
     <None Include="modules\_protected\Shell\EPiServer.Shell.UI.zip" />
     <None Include="packages.config" />
+    <None Include="Views\_23Video\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="References\" />
