@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EPiServer._23Video.Admin {
+namespace EPiCode.TwentyThreeVideo.Admin {
     
     
     public partial class Authenticate {

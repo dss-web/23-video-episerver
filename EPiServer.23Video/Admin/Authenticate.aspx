@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Authenticate.aspx.cs" Inherits="EPiServer._23Video.Admin.Authenticate" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Authenticate.aspx.cs" Inherits="EPiCode.TwentyThreeVideo.Admin.Authenticate" %>
 
 
 <%@ Register TagPrefix="episerverui" Namespace="EPiServer.UI.WebControls" Assembly="EPiServer.UI" %>
