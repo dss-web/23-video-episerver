@@ -1,11 +1,9 @@
 ﻿using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer;
 using EPiServer.Configuration;
 using EPiServer.Core;
-using EPiServer.Data.Dynamic;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAbstraction.RuntimeModel;
 using EPiServer.DataAccess;
@@ -14,7 +12,6 @@ using EPiServer.Framework.Initialization;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
 using EPiCode.TwentyThreeVideo.Models;
-using Settings = EPiCode.TwentyThreeVideo.Provider.Settings;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
@@ -27,8 +24,20 @@ namespace EPiCode.TwentyThreeVideo.Initialize
         public void Initialize(InitializationEngine context)
         {
 
-            //if(Client.ApiProvider == null)
-            //   return;
+            if (Client.Settings.Enabled != null)
+            {
+                bool enabled = false;
+
+                if (bool.TryParse(Client.Settings.Enabled, out enabled))
+                {
+                    // Turn off the provider
+                    if (enabled == false)
+                    {
+                        return;
+                    }
+                }
+            }
+
             // Register 23Video IContentData type
             var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<VideoFolder>>();
             registerFolder.RegisterType();
