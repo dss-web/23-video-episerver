@@ -133,27 +133,35 @@ namespace EPiServer._23Video.Initialize
         public override ContentReference Save(IContent content, SaveAction action)
         {
 
-            //_23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
-            var mediaData = content as MediaData;
+            //if (action == SaveAction.Publish)
+            //{
+                var mediaData = content as MediaData;
 
-            if (mediaData != null && mediaData.BinaryData != null)
-            {
-                Blob blobData = ((MediaData) content).BinaryData;
-
-                using (var stream = blobData.OpenRead())
+                if (mediaData != null && mediaData.BinaryData != null)
                 {
-                    int? videoId = _23VideoFactory.UploadVideo(content.Name, stream, content.ParentLink.ID);
+                    Blob blobData = ((MediaData) content).BinaryData;
 
-                    if (videoId != null)
+                    using (var stream = blobData.OpenRead())
                     {
-                        BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                        int? videoId = _23VideoFactory.UploadVideo(content.Name, stream, content.ParentLink.ID);
 
-                        // We can not return the link to the new content since it will take some time to generate it.
-                        return content.ParentLink;
+                        if (videoId != null)
+                        {
+                            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+
+                            // We can not return the link to the new content since it will take some time to generate it.
+                            return content.ParentLink;
+                        }
                     }
                 }
-            }
-            return ContentReference.StartPage;
+                else
+                {
+                    _23VideoFactory.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
+                    return content.ContentLink;
+
+                }
+            //}
+            return ContentReference.EmptyReference;
         }
 
         #endregion

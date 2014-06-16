@@ -64,14 +64,11 @@ namespace EPiServer._23Video.Factory
             return photos;
         }
 
-        public static void UpdateVideo(Photo photo)
+        public static bool UpdateVideo(Photo photo)
         {
             IPhotoService service = new PhotoService(_23Client.ApiProvider);
 
-            if (service.Update((int) photo.PhotoId, title: photo.Title) == false)
-            {
-                // saved failed.
-            }
+            return service.Update((int) photo.PhotoId, title: photo.Title);
         }
 
         public static int? UploadVideo(string filename, Stream stream, int channel)
