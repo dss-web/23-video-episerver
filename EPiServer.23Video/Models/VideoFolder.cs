@@ -8,10 +8,3 @@ namespace EPiCode.TwentyThreeVideo.Models
 
 }
 
-namespace EPiServer._23Video.Models
-{
-    public class _23VideoFolder : ContentFolder
-    {
-    }
-
-}
