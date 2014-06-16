@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Web.Helpers;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiServer.Core;
@@ -10,6 +12,7 @@ using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
+using EPiServer.Web;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo.Provider
@@ -47,7 +50,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
-           
+
             CreateFoldersFromChannels();
         }
 
@@ -83,6 +86,35 @@ namespace EPiCode.TwentyThreeVideo.Provider
             var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink)); //?? TwentyThreeVideoRepository.GetVideo(contentLink.ID) as ICo;
 
             return item;
+        }
+
+        protected override ContentResolveResult ResolveContent(ContentReference contentLink)
+        {
+            // TODO: Check if _items has value
+            BasicContent video = _items.FirstOrDefault(p => p.ContentLink.Equals(contentLink));
+            if (video == null)
+                return base.ResolveContent(contentLink);
+            return ResolveContent(video);
+        }
+
+        protected override ContentResolveResult ResolveContent(Guid contentGuid)
+        {
+            // TODO: Check if _items has value
+            var video = _items.FirstOrDefault(p => p.ContentGuid.Equals(contentGuid));
+            if (video == null)
+                return base.ResolveContent(contentGuid);
+            return ResolveContent(video);
+        }
+
+        protected ContentResolveResult ResolveContent(BasicContent video)
+        {
+            var contentItem = new ContentCoreData()
+            {
+                ContentGuid = video.ContentGuid,
+                ContentReference = video.ContentLink,
+                ContentTypeID = ContentTypeRepository.Load(typeof(Video)).ID,
+            };
+            return base.CreateContentResolveResult(contentItem);
         }
 
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
@@ -128,14 +160,12 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
                 video.Status = VersionStatus.Published;
                 video.Id = id.ToString();
-                video.ContentGuid = Guid.NewGuid();
+                video.ContentGuid =  StringToGuid(id.ToString());
                 video.VideoId = item.PhotoId.ToString();
                 video.Name = item.Title;
-                //video.BinaryDataContainer =
-                //    new Uri(string.Format("{0}://{1}/{2}", Blob.BlobUriScheme, Blob.DefaultProvider,
-                //        item.PhotoId));
                 video.BinaryData = GetThumbnail(item);
-                video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData,"thumbnail",new ImageDescriptorAttribute(48,48));
+                video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
+
             }
             return video;
         }
@@ -177,7 +207,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
                         var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
                         PopulateVideo(video, item);
-                      
+
                         _items.Add(video);
                         return video.ContentLink;
 
@@ -191,12 +221,11 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         #region Helpers
 
-        private dynamic GetJson(string url)
+        private static Guid StringToGuid(string value)
         {
-            var webClient = new WebClient();
-            var stringResult = webClient.DownloadString(url);
-            return Json.Decode(stringResult);
-
+            MD5 md5Hasher = MD5.Create();
+            byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(value));
+            return new Guid(data);
         }
 
         private Blob GetThumbnail(Photo item)
