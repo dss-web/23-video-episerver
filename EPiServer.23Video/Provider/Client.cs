@@ -25,10 +25,9 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             get
             {
-                //TODO: Move default values to app settings if needed.
                 return new ApiProvider(Settings.Domain,
-                    Settings.CustomerKey,
-                    Settings.CustomerSecret,
+                    Settings.ConsumerKey,
+                    Settings.ConsumerSecret,
                     Settings.AccessToken,
                     Settings.AccessTokenSecret, true);
 

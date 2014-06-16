@@ -1,43 +1,76 @@
 ﻿using System;
-using System.Linq;
-using EPiServer.Data.Cache;
-using EPiServer.Data.Dynamic;
+using System.Configuration;
+using Castle.Windsor.Installer;
 using EPiServer.ServiceLocation;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
-    [ServiceConfiguration(ServiceType=typeof(SettingsRepository))]
+    [ServiceConfiguration(ServiceType = typeof(SettingsRepository))]
     public class SettingsRepository
     {
-        private static DynamicDataStore Store
-        {
-            get { return typeof(Settings).GetStore(); }
-        }
-
-        public bool SaveSettings(Settings settings)
-        {
-            try
-            {
-                var currentSettings = LoadSettings();
-                Store.Save(settings, currentSettings.Id);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
 
         public Settings LoadSettings()
         {
-            
-            var currentSettings = Store.Items<Settings>().FirstOrDefault();
-            if (currentSettings == null)
-            {
-                currentSettings = new Settings();
-                Store.Save(currentSettings);
-            }
+            Settings currentSettings = new Settings();
+
+            currentSettings.Enabled = Enabled;
+            currentSettings.Domain = Domain;
+            currentSettings.ConsumerKey = ConsumerKey;
+            currentSettings.ConsumerSecret = ConsumerSecret;
+            currentSettings.AccessToken = AccessToken;
+            currentSettings.AccessTokenSecret = AccessTokenSecret;
+
             return currentSettings;
+        }
+
+        private  string GetAppSetting(string identifier)
+        {
+            try
+            {
+                string result = ConfigurationManager.AppSettings.Get(identifier);
+                if (String.IsNullOrEmpty(result)) throw new Exception("TwentyTreeVideo value '" + identifier + "' not set in config.");
+                return result;
+            }
+            catch
+            {
+                throw new Exception("TwentyTreeVideo value ´" + identifier + "´ not set in config");
+            }
+        }
+
+        public string Enabled
+        {
+            get { return GetAppSetting("TwentythreeVideoEnabled"); }
+            private set { }
+        }
+
+        public  string Domain
+        {
+            get { return GetAppSetting("TwentythreeVideoDomain"); }
+            private set { }
+        }
+
+        public  string ConsumerKey
+        {
+            get { return GetAppSetting("TwentythreeVideoConsumerKey"); }
+            private set { }
+        }
+
+        public  string ConsumerSecret
+        {
+            get { return GetAppSetting("TwentythreeVideoConsumerSecret"); }
+            private set { }
+        }
+
+        public  string AccessToken
+        {
+            get { return GetAppSetting("TwentythreeVideoAccessToken"); }
+            private set { }
+        }
+
+        public  string AccessTokenSecret
+        {
+            get { return GetAppSetting("TwentythreeVideoAccessTokenSecret"); }
+            private set { }
         }
     }
 }

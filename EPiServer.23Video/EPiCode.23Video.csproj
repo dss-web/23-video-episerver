@@ -186,13 +186,6 @@
   <ItemGroup>
     <Compile Include="Controllers\TwentyThreeVideoPartialContentController.cs" />
     <Compile Include="Provider\Client.cs" />
-    <Compile Include="Admin\Authenticate.aspx.cs">
-      <DependentUpon>Authenticate.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\Authenticate.aspx.designer.cs">
-      <DependentUpon>Authenticate.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\TwentyThreeVideoController.cs" />
     <Compile Include="Provider\TwentyThreeVideoRepository.cs" />
     <Compile Include="Initialize\TwentyThreeVideoDependencyResolverInitialization.cs" />
@@ -219,11 +212,6 @@
     <None Include="Views\TwentyThreeVideo\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="Admin\Authenticate.aspx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
