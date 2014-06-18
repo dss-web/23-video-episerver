@@ -5,7 +5,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
     public class Settings
     {
         public Identity Id { get; set; }
-
+          
         public string Enabled { get; set; }
 
         public string Domain { get; set; }
