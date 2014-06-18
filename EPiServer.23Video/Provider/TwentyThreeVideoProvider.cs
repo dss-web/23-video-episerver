@@ -6,7 +6,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Helpers;
+using System.Web.Script.Serialization;
 using EPiCode.TwentyThreeVideo.Models;
+using EPiCode.TwentyThreeVideo.oEmbed;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
@@ -160,11 +162,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
                 video.Status = VersionStatus.Published;
                 video.Id = id.ToString();
-                video.ContentGuid =  StringToGuid(id.ToString());
+                video.ContentGuid = StringToGuid(id.ToString());
                 video.VideoId = item.PhotoId.ToString();
                 video.Name = item.Title;
                 video.BinaryData = GetThumbnail(item);
                 video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
+                video.oEmbedVideoName = item.One;
+
 
             }
             return video;
@@ -181,9 +185,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
             return "<iframe src=\"http://" + domain + "/v.ihtml?token=" + photoToken + "&photo%5fid=" + photoId + "\" width=\"" + widthString + "\" height=\"" + heightString + "\" frameborder=\"0\" border=\"0\" scrolling=\"no\"></iframe>";
 
         }
-
-
-
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
