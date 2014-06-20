@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.Helpers;
-using System.Web.Script.Serialization;
 using EPiCode.TwentyThreeVideo.Models;
-using EPiCode.TwentyThreeVideo.oEmbed;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
