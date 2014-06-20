@@ -15,7 +15,7 @@ namespace EPiCode.TwentyThreeVideo.Controllers
             {
                 if (isoEmbedEnabled)
                 {
-                    currentContent.VideoUrl =
+                    currentContent.VideoUrl = 
                         TwentyThreeVideoRepository.GetoEmbedCodeForVideo(currentContent.oEmbedVideoName);
                 }
             }

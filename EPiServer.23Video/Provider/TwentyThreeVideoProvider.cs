@@ -39,7 +39,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             _thumbnailManager = thumbnailManager;
 
         }
-
+        
         public override ContentProviderCapabilities ProviderCapabilities
         {
             get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }

@@ -112,10 +112,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             string jsonResponse = string.Empty;
 
-            //TODO: Change to DSS_Test url
-            // string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName);
-            // This url is just for testing
-            string endpoint = "http://videos.23video.com/oembed?format=json&url=http://videos.23video.com/case-roskilde-festival";
+
+            string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName); 
 
             var webClient = new WebClient();
 
