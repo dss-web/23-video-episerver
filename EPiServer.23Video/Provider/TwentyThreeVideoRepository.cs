@@ -1,5 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Web.Script.Serialization;
+using System.Web.WebPages.Scope;
+using EPiCode.TwentyThreeVideo.oEmbed;
+using log4net;
 using Visual;
 using Visual.Domain;
 
@@ -7,6 +12,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
 {
     public static class TwentyThreeVideoRepository
     {
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static List<Photo> GetVideoList()
         {
             IApiProvider apiProvider = Client.ApiProvider;
@@ -101,5 +108,32 @@ namespace EPiCode.TwentyThreeVideo.Provider
             return albumService.GetList();
         }
 
+        public static string GetoEmbedCodeForVideo(string videoName)
+        {
+            string jsonResponse = string.Empty;
+
+
+            string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName); 
+
+            var webClient = new WebClient();
+
+            try
+            {
+                jsonResponse = webClient.DownloadString(endpoint);
+            }
+            catch (WebException exception)
+            {
+                    _log.ErrorFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
+            }
+
+            if (!string.IsNullOrEmpty(jsonResponse))
+            {
+                var jSerialize = new JavaScriptSerializer();
+                var oEmbedResponse = jSerialize.Deserialize<oEmbedResponse>(jsonResponse);
+                return oEmbedResponse.RenderMarkup();
+            }
+
+            return string.Empty;
+        }
     }
 }

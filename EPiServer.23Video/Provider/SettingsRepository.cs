@@ -20,6 +20,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             currentSettings.AccessToken = AccessToken;
             currentSettings.AccessTokenSecret = AccessTokenSecret;
 
+
             return currentSettings;
         }
 
@@ -70,6 +71,12 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public  string AccessTokenSecret
         {
             get { return GetAppSetting("TwentythreeVideoAccessTokenSecret"); }
+            private set { }
+        }
+
+        public bool oEmbedIsEnabled
+        {
+            get { return bool.Parse(GetAppSetting("TwentyThreeVideoEnableoEmbed")); }
             private set { }
         }
     }

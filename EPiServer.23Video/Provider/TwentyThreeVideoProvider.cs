@@ -1,24 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Helpers;
+using System.Web.Script.Serialization;
 using EPiCode.TwentyThreeVideo.Models;
+using EPiCode.TwentyThreeVideo.oEmbed;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.Web;
+using log4net;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     public class TwentyThreeVideoProvider : ContentProvider
     {
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly List<BasicContent> _items = new List<BasicContent>();
         private readonly SettingsRepository _settingsRepository;
         private readonly IContentTypeRepository _contentTypeRepository;
@@ -34,14 +40,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
             _entryPoint = entryPoint;
             _settingsRepository = settingsRepository;
             _thumbnailManager = thumbnailManager;
+            _settingsRepository = settingsRepository;
 
         }
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
             get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }
-            //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
-
         }
 
         #region ContentProvider
@@ -85,6 +90,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     folder.ContentLink = new ContentReference(id, ProviderKey);
                     folder.Name = album.Title;
                     _items.Add(folder);
+                    _log.InfoFormat("23Video: Channel {0} created.", album.Title);
                 }
             }
         }
@@ -103,19 +109,30 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         protected override ContentResolveResult ResolveContent(ContentReference contentLink)
         {
-            // TODO: Check if _items has value
+            if (_items == null)
+            {
+                _log.InfoFormat("23Video: _items is null when resolving content with it {0}. Return null", contentLink.ID);
+                return null;
+            }
+
             BasicContent video = _items.FirstOrDefault(p => p.ContentLink.Equals(contentLink));
+            
             if (video == null)
+            {
                 return base.ResolveContent(contentLink);
+            }
             return ResolveContent(video);
         }
 
         protected override ContentResolveResult ResolveContent(Guid contentGuid)
         {
-            // TODO: Check if _items has value
             var video = _items.FirstOrDefault(p => p.ContentGuid.Equals(contentGuid));
+            
             if (video == null)
+            {
                 return base.ResolveContent(contentGuid);
+            }
+
             return ResolveContent(video);
         }
 
@@ -140,6 +157,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(VideoFolder) }).ToList();
 
             var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
+                    {
+                        _log.InfoFormat("23Video: Added video with name {0}", video.Name);
+                    }
+                    else
+                    {
+                        _log.InfoFormat("23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}", item.One);
+                    }
             return _items
                .Where(p => p is Video && p.ParentLink.ID.Equals(content.ContentLink.ID))
                .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(Video) }).ToList();
@@ -163,6 +187,14 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 video.Name = item.Title;
                 video.BinaryData = GetThumbnail(item);
                 video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
+                video.oEmbedVideoName = item.One;
+
+                if (_settingsRepository.oEmbedIsEnabled)
+                {
+                    video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                }
+
+                _log.InfoFormat("23Video: Created IContent for video with id {0} and name {1}", id, video.Name);
 
             }
             return video;
@@ -180,9 +212,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         }
 
-
-
-
         public override ContentReference Save(IContent content, SaveAction action)
         {
             var mediaData = content as MediaData;
@@ -198,8 +227,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     {
                         BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
                         var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-      _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as
-      Video;
+                                    _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
 
                         var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
                         PopulateVideo(video, item);

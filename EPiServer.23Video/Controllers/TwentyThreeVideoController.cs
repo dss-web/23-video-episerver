@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer.Web;
 using EPiCode.TwentyThreeVideo.Models;
 
@@ -8,7 +9,12 @@ namespace EPiCode.TwentyThreeVideo.Controllers
     {
         public ActionResult Index(Video currentContent)
         {
-            return View(currentContent);
+            if (Client.Settings.oEmbedIsEnabled)
+            {
+                currentContent.VideoUrl = currentContent.oEmbedHtml;
+            }
+
+            return PartialView(currentContent);
         }
     }
 }

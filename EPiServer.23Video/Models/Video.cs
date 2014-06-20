@@ -16,5 +16,9 @@ namespace EPiCode.TwentyThreeVideo.Models
 
         [ImageDescriptor(Height = 48, Width = 48)]
         public virtual Blob Thumbnail { get; set; }
+
+        public virtual string oEmbedVideoName { get; set; }
+        public virtual string oEmbedHtml { get; set; }
+        
     }
 }
