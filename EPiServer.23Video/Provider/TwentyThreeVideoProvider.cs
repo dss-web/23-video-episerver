@@ -67,8 +67,17 @@ namespace EPiCode.TwentyThreeVideo.Provider
                             GetDefaultContent(LoadContent(basicContent.ContentLink, LanguageSelector.AutoDetect()),
                                 _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as
                                 Video;
-                        PopulateVideo(video, item);
-                        _items.Add(video);
+                        if (video != null)
+                        {
+                            _log.DebugFormat("23Video: Added video with name {0}", video.Name);
+                            PopulateVideo(video, item);
+                            _items.Add(video);
+                        }
+                        else
+                        {
+                            _log.InfoFormat("23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}", item.One);
+                        }
+
                     }
                 }
             }
@@ -116,7 +125,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
 
             BasicContent video = _items.FirstOrDefault(p => p.ContentLink.Equals(contentLink));
-            
+
             if (video == null)
             {
                 return base.ResolveContent(contentLink);
@@ -127,7 +136,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         protected override ContentResolveResult ResolveContent(Guid contentGuid)
         {
             var video = _items.FirstOrDefault(p => p.ContentGuid.Equals(contentGuid));
-            
+
             if (video == null)
             {
                 return base.ResolveContent(contentGuid);
@@ -150,20 +159,11 @@ namespace EPiCode.TwentyThreeVideo.Provider
         protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
         {
             languageSpecific = false;
-
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
                 return _items
                     .Where(p => p is VideoFolder)
                     .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(VideoFolder) }).ToList();
-
             var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
-                    {
-                        _log.InfoFormat("23Video: Added video with name {0}", video.Name);
-                    }
-                    else
-                    {
-                        _log.InfoFormat("23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}", item.One);
-                    }
             return _items
                .Where(p => p is Video && p.ParentLink.ID.Equals(content.ContentLink.ID))
                .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(Video) }).ToList();
