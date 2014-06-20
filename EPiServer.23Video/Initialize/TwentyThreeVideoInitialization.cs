@@ -15,11 +15,11 @@ using EPiCode.TwentyThreeVideo.Models;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
-      [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
     public class TwentyThreeVideoInitialization : EPiServer.Framework.IInitializableModule
     {
 
-        protected Injected<SettingsRepository> SettingsRepository { get; set; } 
+        protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
         public void Initialize(InitializationEngine context)
         {
@@ -57,13 +57,11 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             providerValues.Add(ContentProviderElement.EntryPointString, entryPoint.ContentLink.ID.ToString());
             providerValues.Add(ContentProviderElement.CapabilitiesString, ContentProviderElement.FullSupportString);
 
-            var productProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance< ThumbnailManager>(), entryPoint, ServiceLocator.Current.GetInstance<SettingsRepository>());
+            var twentyThreeVideoProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance<ThumbnailManager>(), entryPoint, ServiceLocator.Current.GetInstance<SettingsRepository>());
 
-
-            productProvider.Initialize("23Video", providerValues);
-
+            twentyThreeVideoProvider.Initialize("23Video", providerValues);
             var providerManager = context.Locate.Advanced.GetInstance<IContentProviderManager>();
-            providerManager.ProviderMap.AddProvider(productProvider);
+            providerManager.ProviderMap.AddProvider(twentyThreeVideoProvider);
 
         }
 
