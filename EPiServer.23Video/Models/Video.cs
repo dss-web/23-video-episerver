@@ -18,5 +18,7 @@ namespace EPiCode.TwentyThreeVideo.Models
         public virtual Blob Thumbnail { get; set; }
 
         public virtual string oEmbedVideoName { get; set; }
+        public virtual string oEmbedHtml { get; set; }
+        
     }
 }

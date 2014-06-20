@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,12 +16,15 @@ using EPiServer.DataAccess;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.Web;
+using log4net;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     public class TwentyThreeVideoProvider : ContentProvider
     {
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly List<BasicContent> _items = new List<BasicContent>();
         private readonly SettingsRepository _settingsRepository;
 
@@ -37,14 +41,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
             _entryPoint = entryPoint;
             _settingsRepository = settingsRepository;
             _thumbnailManager = thumbnailManager;
+            _settingsRepository = settingsRepository;
 
         }
-        
+
         public override ContentProviderCapabilities ProviderCapabilities
         {
             get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }
-            //ContentProviderCapabilities.Edit | ContentProviderCapabilities.Create | ContentProviderCapabilities.Move | ContentProviderCapabilities.Security; }
-
         }
 
         #region ContentProvider
@@ -73,6 +76,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     folder.ContentLink = new ContentReference(id, ProviderKey);
                     folder.Name = album.Title;
                     _items.Add(folder);
+                    _log.InfoFormat("23Video: Channel {0} created.", album.Title);
                 }
             }
         }
@@ -92,19 +96,30 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         protected override ContentResolveResult ResolveContent(ContentReference contentLink)
         {
-            // TODO: Check if _items has value
+            if (_items == null)
+            {
+                _log.InfoFormat("23Video: _items is null when resolving content with it {0}. Return null", contentLink.ID);
+                return null;
+            }
+
             BasicContent video = _items.FirstOrDefault(p => p.ContentLink.Equals(contentLink));
+            
             if (video == null)
+            {
                 return base.ResolveContent(contentLink);
+            }
             return ResolveContent(video);
         }
 
         protected override ContentResolveResult ResolveContent(Guid contentGuid)
         {
-            // TODO: Check if _items has value
             var video = _items.FirstOrDefault(p => p.ContentGuid.Equals(contentGuid));
+            
             if (video == null)
+            {
                 return base.ResolveContent(contentGuid);
+            }
+
             return ResolveContent(video);
         }
 
@@ -136,12 +151,19 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
                 foreach (var item in videos)
                 {
-                    var video =
-                        GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()),
-                            _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as
-                            Video;
-                    PopulateVideo(video, item);
-                    _items.Add(video);
+                    var video = GetDefaultContent(LoadContent(contentLink, LanguageSelector.AutoDetect()),
+                            _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+
+                    if (video != null)
+                    {
+                        PopulateVideo(video, item);
+                        _items.Add(video);
+                        _log.InfoFormat("23Video: Added video with name {0}", video.Name);
+                    }
+                    else
+                    {
+                        _log.InfoFormat("23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}", item.One);
+                    }
                 }
             }
             return _items
@@ -169,6 +191,12 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
                 video.oEmbedVideoName = item.One;
 
+                if (_settingsRepository.oEmbedIsEnabled)
+                {
+                    video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                }
+
+                _log.InfoFormat("23Video: Created IContent for video with id {0} and name {1}", id, video.Name);
 
             }
             return video;
@@ -188,7 +216,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         public override ContentReference Save(IContent content, SaveAction action)
         {
-
             //TwentyThreeVideoRepository.UpdateVideo(new Photo() { PhotoId = content.ContentLink.ID, Title = ((IContent)content).Name });
             var mediaData = content as MediaData;
 
@@ -203,8 +230,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     {
                         BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
                         var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-      _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as
-      Video;
+                                    _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
 
                         var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
                         PopulateVideo(video, item);

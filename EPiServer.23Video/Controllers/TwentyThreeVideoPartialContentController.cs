@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Web.Mvc;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
@@ -10,14 +9,9 @@ namespace EPiCode.TwentyThreeVideo.Controllers
     {
         public override ActionResult Index(Video currentContent)
         {
-            bool isoEmbedEnabled;
-            if (bool.TryParse(ConfigurationManager.AppSettings.Get("TwentyThreeVideoEnableoEmbed"), out isoEmbedEnabled))
+            if (Client.Settings.oEmbedIsEnabled)
             {
-                if (isoEmbedEnabled)
-                {
-                    currentContent.VideoUrl = 
-                        TwentyThreeVideoRepository.GetoEmbedCodeForVideo(currentContent.oEmbedVideoName);
-                }
+                currentContent.VideoUrl = currentContent.oEmbedHtml;
             }
 
             return PartialView(currentContent);
