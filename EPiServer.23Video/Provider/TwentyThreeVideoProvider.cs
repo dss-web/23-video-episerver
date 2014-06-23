@@ -81,23 +81,32 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         private void CreateFoldersFromChannels()
         {
-            List<Album> albums = TwentyThreeVideoRepository.GetChannelList();
-            foreach (var album in albums)
+
+            try
             {
-                var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<VideoFolder>().ID,
-                        LanguageSelector.AutoDetect()) as VideoFolder;
-
-                if (folder == null) continue;
-
-                if (album.AlbumId != null)
+                List<Album> albums = TwentyThreeVideoRepository.GetChannelList();
+                foreach (var album in albums)
                 {
-                    var id = (int)album.AlbumId;
-                    folder.ContentLink = new ContentReference(id, ProviderKey);
-                    folder.Name = album.Title;
-                    _items.Add(folder);
-                    _log.InfoFormat("23Video: Channel {0} created.", album.Title);
+                    var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<VideoFolder>().ID,
+                            LanguageSelector.AutoDetect()) as VideoFolder;
+
+                    if (folder == null) continue;
+
+                    if (album.AlbumId != null)
+                    {
+                        var id = (int)album.AlbumId;
+                        folder.ContentLink = new ContentReference(id, ProviderKey);
+                        folder.Name = album.Title;
+                        _items.Add(folder);
+                        _log.InfoFormat("23Video: Channel {0} created.", album.Title);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+             _log.Error(string.Format("23Video: Could not load channels from 23Video. Please check you settings in web.config "), ex);   
+            }
+            
         }
 
 

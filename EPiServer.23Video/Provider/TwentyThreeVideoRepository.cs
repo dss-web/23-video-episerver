@@ -81,7 +81,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             if (fileExtention == null)
             {
-                //TODO: Choose a default extention if missing.
+                //TODO: Choose a default extention if file has no extention.
                 //default extention if missing
                 fileExtention = ".mp4";
             }
@@ -111,7 +111,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public static string GetoEmbedCodeForVideo(string videoName)
         {
             string jsonResponse = string.Empty;
-
 
             string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName); 
 

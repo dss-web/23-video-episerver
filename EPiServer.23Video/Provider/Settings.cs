@@ -11,6 +11,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public string ConsumerSecret { get; set; }
         public string AccessToken { get; set; }
         public string AccessTokenSecret { get; set; }
-        public bool oEmbedIsEnabled { get; set; }
+        public bool OEmbedIsEnabled { get; set; }
     }
 }
