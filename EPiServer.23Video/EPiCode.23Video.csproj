@@ -213,6 +213,7 @@
     <None Include="ClientResources\module.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="EPiCode.23Video.Core.nuspec" />
     <None Include="EPiCode.23Video.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
