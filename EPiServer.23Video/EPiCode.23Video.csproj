@@ -187,7 +187,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Controllers\TwentyThreeVideoPartialContentController.cs" />
+    <Compile Include="Data\IntermediateVideoDataModel.cs" />
+    <Compile Include="Data\IntermediateVideoDataRepository.cs" />
+    <Compile Include="Data\VideoContentType.cs" />
+    <Compile Include="VideoHelper.cs" />
     <Compile Include="oEmbed\oEmbedResponse.cs" />
     <Compile Include="oEmbed\oEmbedSettings.cs" />
     <Compile Include="oEmbed\oEmbedType.cs" />
@@ -205,6 +210,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\TwentyThreeVideoComponent.cs" />
     <Compile Include="UI\TwentyThreeVideoRepositoryDescriptor.cs" />
+    <Compile Include="UI\VideEditorDescriptor.cs" />
+    <Compile Include="Data\VideoContentDataModel.cs" />
+    <Compile Include="Data\VideoSynchronizationEventHandler.cs" />
+    <Compile Include="Data\VideoSynchronizationJob.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="twentythree.lang.twentythree.xml" />

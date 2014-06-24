@@ -6,11 +6,12 @@
             <command>
               <openineditor>Open in Image Editor</openineditor>
               <label>Upload files</label>
-              <download>Download</download>
+              <download>Download</download> 
             </command>
             <description>Media management</description>
             <dropareatitle>Upload videos by dropping them here or click to browse</dropareatitle>
             <linktocreateitem>Upload videos</linktocreateitem>
+            <videoedit>Edit video</videoedit>
             <nocontent>This folder does not contain any media</nocontent>
             <title>Media</title>
             <translationfailedmessage>Failed to translate the content "{0}". You might not have access rights for this action.</translationfailedmessage>

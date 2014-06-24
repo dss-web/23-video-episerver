@@ -48,6 +48,9 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             IPhotoService photoService = new PhotoService(apiProvider);
 
+            Visual.SiteService vc = new SiteService(apiProvider);
+            Visual.ISessionService ss = new SessionService(apiProvider);
+            
             PhotoListParameters p = photoListParameters;
 
             if (photoListParameters == null)
