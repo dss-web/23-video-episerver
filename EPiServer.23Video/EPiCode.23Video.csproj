@@ -187,12 +187,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\TwentyThreeVideoPartialContentController.cs" />
     <Compile Include="oEmbed\oEmbedResponse.cs" />
     <Compile Include="oEmbed\oEmbedSettings.cs" />
     <Compile Include="oEmbed\oEmbedType.cs" />
     <Compile Include="Provider\Client.cs" />
-    <Compile Include="Controllers\TwentyThreeVideoController.cs" />
     <Compile Include="Provider\Extensions.cs" />
     <Compile Include="Provider\TwentyThreeVideoRepository.cs" />
     <Compile Include="Initialize\TwentyThreeVideoDependencyResolverInitialization.cs" />
@@ -219,8 +217,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Views\TwentyThreeVideoPartialContent\Index.cshtml" />
-    <None Include="Views\TwentyThreeVideo\Index.cshtml" />
+    <None Include="reamme.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
