@@ -12,5 +12,11 @@
   </metadata>
   <files>
     <file src="bin\Release\EPiCode.23Video.dll" target="lib\net40\EPiCode.23Video.dll" />
+    <file src="References\23API.dll" target="lib\net40\23API.dll" />
+    <file src="References\DotNetOpenAuth.dll" target="lib\net40\DotNetOpenAuth.dll" />
+
+    <file src="ClientResources\module.config" target="content\modules\TwentyThree\module.config" />
+    <file src="ClientResources\Scripts\Components\TwentyThreeVideo.js" target="content\modules\TwentyThree\Scripts\Components\TwentyThreeVideo.js" />
+    <file src="ClientResources\Scripts\Components\TwentyThreeVideoViewModel.js" target="content\modules\TwentyThree\Scripts\Components\TwentyThreeVideoViewModel.js" />
   </files>
 </package>
