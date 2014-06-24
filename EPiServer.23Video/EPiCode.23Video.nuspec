@@ -1,0 +1,16 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EPiCode.23Video</id>
+    <version>$version$</version>
+    <title>EPiCode.23Video</title>
+    <authors>DSS</authors>
+    <owners>DSS</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Videointegrasjon 23Video</description>
+    <copyright>Copyright 2014</copyright>
+  </metadata>
+  <files>
+    <file src="bin\Release\EPiCode.23Video.dll" target="lib\net40\EPiCode.23Video.dll" />
+  </files>
+</package>
