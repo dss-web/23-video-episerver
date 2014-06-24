@@ -84,7 +84,17 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         public bool oEmbedIsEnabled
         {
-            get { return bool.Parse(GetAppSetting("TwentyThreeVideoEnableoEmbed")); }
+            get
+            {
+                var oEmbedSetting = GetAppSetting("TwentyThreeVideoEnableoEmbed");
+
+                if (string.IsNullOrEmpty(oEmbedSetting) == false)
+                {
+                    return bool.Parse(oEmbedSetting);    
+                }
+
+                return false;
+            }
             private set { }
         }
     }
