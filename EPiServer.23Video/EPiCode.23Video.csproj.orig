@@ -187,12 +187,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="Constants.cs" />
-    <Compile Include="Controllers\TwentyThreeVideoController.cs" />
+    <Compile Include="Controllers\TwentyThreeVideoPartialContentController.cs" />
     <Compile Include="Data\IntermediateVideoDataModel.cs" />
     <Compile Include="Data\IntermediateVideoDataRepository.cs" />
     <Compile Include="Data\VideoContentType.cs" />
     <Compile Include="VideoHelper.cs" />
+=======
+    <Compile Include="Controllers\TwentyThreeVideoController.cs" />
+>>>>>>> df6d662947b2b321727f073f114ddbfd63b94d46
     <Compile Include="oEmbed\oEmbedResponse.cs" />
     <Compile Include="Provider\Client.cs" />
     <Compile Include="Provider\Extensions.cs" />
