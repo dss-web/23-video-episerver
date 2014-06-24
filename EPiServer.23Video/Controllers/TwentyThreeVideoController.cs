@@ -1,19 +1,15 @@
 ﻿using System.Web.Mvc;
-using EPiCode.TwentyThreeVideo.Provider;
+using EPiServer.Framework.DataAnnotations;
 using EPiServer.Web;
 using EPiCode.TwentyThreeVideo.Models;
 
 namespace EPiCode.TwentyThreeVideo.Controllers
 {
+    [TemplateDescriptor(TagString = EPiServer.Framework.Web.RenderingTags.Preview )]
     public class TwentyThreeVideoController : Controller, IRenderTemplate<Video>
     {
         public ActionResult Index(Video currentContent)
         {
-            if (Client.Settings.oEmbedIsEnabled)
-            {
-                currentContent.VideoUrl = currentContent.oEmbedHtml;
-            }
-
             return PartialView(currentContent);
         }
     }

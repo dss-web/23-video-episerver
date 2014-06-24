@@ -188,16 +188,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Controllers\TwentyThreeVideoPartialContentController.cs" />
     <Compile Include="Data\IntermediateVideoDataModel.cs" />
     <Compile Include="Data\IntermediateVideoDataRepository.cs" />
     <Compile Include="Data\VideoContentType.cs" />
     <Compile Include="VideoHelper.cs" />
     <Compile Include="oEmbed\oEmbedResponse.cs" />
-    <Compile Include="oEmbed\oEmbedSettings.cs" />
-    <Compile Include="oEmbed\oEmbedType.cs" />
     <Compile Include="Provider\Client.cs" />
-    <Compile Include="Controllers\TwentyThreeVideoController.cs" />
     <Compile Include="Provider\Extensions.cs" />
     <Compile Include="Provider\TwentyThreeVideoRepository.cs" />
     <Compile Include="Initialize\TwentyThreeVideoDependencyResolverInitialization.cs" />
@@ -225,11 +221,12 @@
     <None Include="ClientResources\module.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="EPiCode.23Video.Core.nuspec" />
+    <None Include="EPiCode.23Video.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Views\TwentyThreeVideoPartialContent\Index.cshtml" />
-    <None Include="Views\TwentyThreeVideo\Index.cshtml" />
+    <None Include="reamme.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

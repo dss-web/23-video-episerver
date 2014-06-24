@@ -2,12 +2,14 @@
 using System.Configuration;
 using Castle.Windsor.Installer;
 using EPiServer.ServiceLocation;
+using log4net;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     [ServiceConfiguration(ServiceType = typeof(SettingsRepository))]
     public class SettingsRepository
     {
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public Settings LoadSettings()
         {
@@ -19,6 +21,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             currentSettings.ConsumerSecret = ConsumerSecret;
             currentSettings.AccessToken = AccessToken;
             currentSettings.AccessTokenSecret = AccessTokenSecret;
+            currentSettings.OEmbedIsEnabled = oEmbedIsEnabled;
 
 
             return currentSettings;
@@ -29,13 +32,18 @@ namespace EPiCode.TwentyThreeVideo.Provider
             try
             {
                 string result = ConfigurationManager.AppSettings.Get(identifier);
-                if (String.IsNullOrEmpty(result)) throw new Exception("TwentyTreeVideo value '" + identifier + "' not set in config.");
+                if (String.IsNullOrEmpty(result))
+                {
+                    _log.Error("TwentyTreeVideo value '" + identifier + "' not set in config.");
+                }
+
                 return result;
             }
-            catch
+            catch(Exception ex)
             {
-                throw new Exception("TwentyTreeVideo value ´" + identifier + "´ not set in config");
+                _log.Error("TwentyTreeVideo value ´" + identifier + "´ not set in config", ex);
             }
+            return null;
         }
 
         public string Enabled
@@ -76,7 +84,17 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         public bool oEmbedIsEnabled
         {
-            get { return bool.Parse(GetAppSetting("TwentyThreeVideoEnableoEmbed")); }
+            get
+            {
+                var oEmbedSetting = GetAppSetting("TwentyThreeVideoEnableoEmbed");
+
+                if (string.IsNullOrEmpty(oEmbedSetting) == false)
+                {
+                    return bool.Parse(oEmbedSetting);    
+                }
+
+                return false;
+            }
             private set { }
         }
     }
