@@ -188,8 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="oEmbed\oEmbedResponse.cs" />
-    <Compile Include="oEmbed\oEmbedSettings.cs" />
-    <Compile Include="oEmbed\oEmbedType.cs" />
     <Compile Include="Provider\Client.cs" />
     <Compile Include="Provider\Extensions.cs" />
     <Compile Include="Provider\TwentyThreeVideoRepository.cs" />
