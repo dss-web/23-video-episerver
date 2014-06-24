@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EPiCode.TwentyThreeVideo.Data;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
@@ -21,17 +22,20 @@ namespace EPiCode.TwentyThreeVideo.Provider
         private readonly IContentTypeRepository _contentTypeRepository;
         private readonly VideoFolder _entryPoint;
         private readonly ThumbnailManager _thumbnailManager;
+        private readonly IntermediateVideoDataRepository _intermediateVideoDataRepository;
 
         public TwentyThreeVideoProvider(IContentTypeRepository contentTypeRepository,
             ThumbnailManager thumbnailManager,
             VideoFolder entryPoint,
-            SettingsRepository settingsRepository)
+            SettingsRepository settingsRepository,
+            IntermediateVideoDataRepository intermediateVideoDataRepository)
         {
             _contentTypeRepository = contentTypeRepository;
             _entryPoint = entryPoint;
             _settingsRepository = settingsRepository;
             _thumbnailManager = thumbnailManager;
             _settingsRepository = settingsRepository;
+            _intermediateVideoDataRepository = intermediateVideoDataRepository;
         }
 
         public override ContentProviderCapabilities ProviderCapabilities
@@ -111,6 +115,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
                         PhotoId = Convert.ToInt32(newVersion.Id),
                         Title = newVersion.Name
                     });
+                    _intermediateVideoDataRepository.Update(newVersion);
+                    VideoSynchronizationEventHandler.DataStoreUpdated();
                 }
                 //If we saved an item that already has a specific version, just return the current version...
                 return content.ContentLink;
@@ -141,6 +147,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
                             var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
                             helper.PopulateVideo(video, item);
                             _items.Add(video);
+                            _intermediateVideoDataRepository.Update(video);
+                            VideoSynchronizationEventHandler.DataStoreUpdated();
                             return video.ContentLink;
                         }
                     }

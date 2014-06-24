@@ -61,7 +61,20 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
         }
 
-        public List<BasicContent> RefreshStore()
+        public List<BasicContent> Update(BasicContent content)
+        {
+            var items = Load();
+            var existingItem = items.Where(x => x.ContentLink.Equals(content.ContentLink)).FirstOrDefault();
+            if (existingItem != null)
+            {
+                items.Remove(existingItem);
+            }
+            items.Add(content);
+            Save(items);
+            return items;
+        }
+
+        public List<BasicContent> Refresh()
         {
             var items = LoadFromService();
             Save(items);

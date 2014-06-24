@@ -1,4 +1,5 @@
-﻿using EPiCode.TwentyThreeVideo.Provider;
+﻿using EPiCode.TwentyThreeVideo.Data;
+using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer.Framework;
 using EPiServer.ServiceLocation;
 using StructureMap;
@@ -15,6 +16,7 @@ namespace EPiCode.TwentyThreeVideo.Initialize
         private static void ConfigureContainer(ConfigurationExpression container)
         {
             container.For<SettingsRepository>().Use<SettingsRepository>();
+            container.For<IntermediateVideoDataRepository>().Use<IntermediateVideoDataRepository>();
         }
 
         public void Initialize(EPiServer.Framework.Initialization.InitializationEngine context)

@@ -62,7 +62,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             p.Video = true;
 
             List<Photo> photos = photoService.GetList(p);
-            //Caching.VideoProviderCache.Instance.InnerCache.Add(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
+            //Caching.VideoProviderCache.Instance.InnerCache.Update(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
             return photos;
         }
 

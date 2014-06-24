@@ -61,7 +61,7 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             providerValues.Add(ContentProviderElement.EntryPointString, entryPoint.ContentLink.ID.ToString());
             providerValues.Add(ContentProviderElement.CapabilitiesString, ContentProviderElement.FullSupportString);
 
-            var twentyThreeVideoProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance<ThumbnailManager>(), entryPoint, SettingsRepository.Service);
+            var twentyThreeVideoProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance<ThumbnailManager>(), entryPoint, SettingsRepository.Service, ServiceLocator.Current.GetInstance<IntermediateVideoDataRepository>());
 
             twentyThreeVideoProvider.Initialize(Constants.ProviderKey, providerValues);
             var providerManager = context.Locate.Advanced.GetInstance<IContentProviderManager>();
@@ -73,7 +73,7 @@ namespace EPiCode.TwentyThreeVideo.Initialize
         private void Refresh(TwentyThreeVideoProvider twentyThreeVideoProvider)
         {
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            twentyThreeVideoProvider.RefreshItems(intermediateVideoDataRepository.RefreshStore());
+            twentyThreeVideoProvider.RefreshItems(intermediateVideoDataRepository.Refresh());
         }
 
 
