@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EPiCode.23Video.Core</id>
+    <version>$version$</version>
+    <title>EPiCode.23Video.Core</title>
+    <authors>DSS</authors>
+    <owners>DSS</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>EPiServer 23Video integration (dll only)</description>
+    <copyright>Copyright 2014</copyright>
+  </metadata>
+  <files>
+    <file src="bin\Release\EPiCode.23Video.dll" target="lib\net40\EPiCode.23Video.dll" />
+    <file src="References\23API.dll" target="lib\net40\23API.dll" />
+    <file src="References\DotNetOpenAuth.dll" target="lib\net40\DotNetOpenAuth.dll" />
+  </files>
+</package>
