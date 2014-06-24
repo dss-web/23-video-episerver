@@ -7,7 +7,7 @@
     <authors>DSS</authors>
     <owners>DSS</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Videointegrasjon 23Video (dlls only)</description>
+    <description>EPiServer 23Video integration (dll only)</description>
     <copyright>Copyright 2014</copyright>
   </metadata>
   <files>
