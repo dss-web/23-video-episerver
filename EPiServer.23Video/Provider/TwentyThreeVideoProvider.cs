@@ -18,23 +18,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
         private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private List<BasicContent> _items = new List<BasicContent>();
-        private readonly SettingsRepository _settingsRepository;
         private readonly IContentTypeRepository _contentTypeRepository;
-        private readonly VideoFolder _entryPoint;
-        private readonly ThumbnailManager _thumbnailManager;
         private readonly IntermediateVideoDataRepository _intermediateVideoDataRepository;
 
         public TwentyThreeVideoProvider(IContentTypeRepository contentTypeRepository,
-            ThumbnailManager thumbnailManager,
-            VideoFolder entryPoint,
-            SettingsRepository settingsRepository,
             IntermediateVideoDataRepository intermediateVideoDataRepository)
         {
             _contentTypeRepository = contentTypeRepository;
-            _entryPoint = entryPoint;
-            _settingsRepository = settingsRepository;
-            _thumbnailManager = thumbnailManager;
-            _settingsRepository = settingsRepository;
             _intermediateVideoDataRepository = intermediateVideoDataRepository;
         }
 

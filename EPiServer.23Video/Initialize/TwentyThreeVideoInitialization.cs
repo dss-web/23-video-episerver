@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using EPiCode.TwentyThreeVideo.Data;
@@ -15,19 +16,18 @@ using EPiServer.Framework.Initialization;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
 using EPiCode.TwentyThreeVideo.Models;
+using log4net;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
-    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
     [ModuleDependency(typeof(DataInitialization))]
     public class TwentyThreeVideoInitialization : IInitializableModule
     {
-
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
         public void Initialize(InitializationEngine context)
         {
-
             if (Client.Settings.Enabled != null)
             {
                 bool enabled = false;
@@ -52,7 +52,7 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             if (entryPoint == null)
             {
                 entryPoint = contentRepository.GetDefault<VideoFolder>(ContentReference.RootPage);
-                entryPoint.Name = "23Video";
+                entryPoint.Name = Constants.EntryPointName;
                 contentRepository.Save(entryPoint, SaveAction.Publish, AccessLevel.NoAccess);
             }
 
@@ -60,20 +60,26 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             var providerValues = new NameValueCollection();
             providerValues.Add(ContentProviderElement.EntryPointString, entryPoint.ContentLink.ID.ToString());
             providerValues.Add(ContentProviderElement.CapabilitiesString, ContentProviderElement.FullSupportString);
-
-            var twentyThreeVideoProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance<ThumbnailManager>(), entryPoint, SettingsRepository.Service, ServiceLocator.Current.GetInstance<IntermediateVideoDataRepository>());
-
+            var twentyThreeVideoProvider = new TwentyThreeVideoProvider(context.Locate.ContentTypeRepository(), ServiceLocator.Current.GetInstance<IntermediateVideoDataRepository>());
             twentyThreeVideoProvider.Initialize(Constants.ProviderKey, providerValues);
             var providerManager = context.Locate.Advanced.GetInstance<IContentProviderManager>();
             providerManager.ProviderMap.AddProvider(twentyThreeVideoProvider);
-            Task.Run(() => Refresh(twentyThreeVideoProvider));
-            
+
+            // Refresh video content
+            try
+            {
+                Task.Run(() => Refresh(twentyThreeVideoProvider));
+            }
+            catch (Exception ex)
+            {
+                _log.Error("An error occured during video initialization:" + ex);
+            }
         }
 
         private void Refresh(TwentyThreeVideoProvider twentyThreeVideoProvider)
         {
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            twentyThreeVideoProvider.RefreshItems(intermediateVideoDataRepository.Refresh());
+            twentyThreeVideoProvider.RefreshItems(intermediateVideoDataRepository.Load());
         }
 
 

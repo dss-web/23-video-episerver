@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
-using EPiCode.TwentyThreeVideo.Provider;
+using System.Security.Principal;
+using System.Web;
 using EPiServer.BaseLibrary.Scheduling;
-using EPiServer.Core;
+using EPiServer.DataAbstraction;
 using EPiServer.PlugIn;
-using EPiServer.ServiceLocation;
+using EPiServer.Security;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
-    [ScheduledPlugIn(DisplayName = "VideoSynchronizationJob")]
+    [ScheduledPlugIn(DisplayName = "VideoSynchronizationJob", DefaultEnabled = true, IntervalType = ScheduledIntervalType.Minutes, IntervalLength = 30)]
     public class VideoSynchronizationJob : JobBase
     {
         private bool _stopSignaled;
