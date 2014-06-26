@@ -79,7 +79,16 @@ namespace EPiCode.TwentyThreeVideo.Initialize
         private void Refresh(TwentyThreeVideoProvider twentyThreeVideoProvider)
         {
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            twentyThreeVideoProvider.RefreshItems(intermediateVideoDataRepository.Load());
+
+            var items = intermediateVideoDataRepository.Load();
+
+            if (items == null)
+            {
+                items = intermediateVideoDataRepository.LoadFromService();
+                intermediateVideoDataRepository.Save(items);
+            }
+
+            twentyThreeVideoProvider.RefreshItems(items);
         }
 
 

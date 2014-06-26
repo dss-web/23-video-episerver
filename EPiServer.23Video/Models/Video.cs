@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAnnotations;
@@ -7,7 +8,8 @@ using EPiServer.Framework.Blobs;
 
 namespace EPiCode.TwentyThreeVideo.Models
 {
-    //[ContentType(GUID = "D2252133-FB78-470F-8122-90371EEE7A06", DisplayName = "23 Video")]
+    [ContentType(GUID = "D2252133-FB78-470F-8122-90371EEE7A06", 
+        DisplayName = "23 Video media", AvailableInEditMode = false)]
     public class Video : ContentBase, IBinaryStorable
     {
         [Ignore]

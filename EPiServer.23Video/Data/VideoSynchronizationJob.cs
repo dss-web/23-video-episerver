@@ -9,7 +9,7 @@ using EPiServer.Security;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
-    [ScheduledPlugIn(DisplayName = "VideoSynchronizationJob", DefaultEnabled = true, IntervalType = ScheduledIntervalType.Minutes, IntervalLength = 30)]
+    [ScheduledPlugIn(DisplayName = "23 Video integration job", DefaultEnabled = true, IntervalType = ScheduledIntervalType.Minutes, IntervalLength = 30)]
     public class VideoSynchronizationJob : JobBase
     {
         private bool _stopSignaled;

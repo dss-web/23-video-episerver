@@ -48,9 +48,15 @@ namespace EPiCode.TwentyThreeVideo.Data
         {
             var store = VideoContentDataModelStore;
             var videocontentDatamodel = store.Load<VideoContentDataModel>(VideoContentDataModelId);
-            string serializedContents = videocontentDatamodel.SerializedContent;
-            var contents = JsonConvert.DeserializeObject<List<IntermediateVideoDataModel>>(serializedContents);
-            return ConvertToBasicContent(contents).ToList();
+
+            if (videocontentDatamodel != null)
+            {
+                string serializedContents = videocontentDatamodel.SerializedContent;
+                var contents = JsonConvert.DeserializeObject<List<IntermediateVideoDataModel>>(serializedContents);
+                return ConvertToBasicContent(contents).ToList();
+            }
+
+            return null;
         }
 
         public Guid VideoContentDataModelId
