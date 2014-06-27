@@ -72,7 +72,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             if (service.Update((int)photo.PhotoId, title: photo.Title) == false)
             {
-                // saved failed.
+                _log.ErrorFormat("23Video: Failed updating video with id {0}, title: {1}", photo.PhotoId, photo.Title);
             }
         }
 
