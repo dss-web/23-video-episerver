@@ -1,5 +1,8 @@
 ﻿23Video
-===========
+======================
+
+Controllers
+======================
 
 Controllers;
 using System.Web.Mvc;
@@ -34,8 +37,19 @@ namespace EPiCode.TwentyThreeVideo.Controllers
 }
 
 Views
-\Views\TwentyThreeVideo
-\Views\TwentyThreeVideoPartialContent
+======================
 
+\View
 @Model Models.Video
-@Html.Raw(Model.VideoUrl)
+@Html.Raw(Model.VideoUrl) eller @Html.Raw(Model.oEmbedHtml)
+
+\DisplayTemplates
+@if (Model != null && Model != ContentReference.EmptyReference)
+{
+    var oEmbedHtml = DataFactory.Instance.Get<Video>(@Model);
+
+    if (oEmbedHtml != null)
+    {
+        @Html.Raw(oEmbedHtml.oEmbedHtml)
+    }
+}

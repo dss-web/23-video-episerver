@@ -4,6 +4,7 @@ using EPiCode.TwentyThreeVideo.Models;
 using EPiServer;
 using EPiServer.Core;
 using EPiServer.ServiceLocation;
+using EPiServer.Shell.ObjectEditing;
 using EPiServer.Shell.ObjectEditing.EditorDescriptors;
 
 namespace EPiCode.TwentyThreeVideo.UI
