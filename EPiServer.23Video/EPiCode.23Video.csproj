@@ -208,7 +208,7 @@
     <Compile Include="UI\TwentyThreeUIHint.cs" />
     <Compile Include="UI\TwentyThreeVideoComponent.cs" />
     <Compile Include="UI\TwentyThreeVideoRepositoryDescriptor.cs" />
-    <Compile Include="UI\VideEditorDescriptor.cs" />
+    <Compile Include="UI\VideoEditorDescriptor.cs" />
     <Compile Include="Data\VideoContentDataModel.cs" />
     <Compile Include="Data\VideoSynchronizationEventHandler.cs" />
     <Compile Include="Data\VideoSynchronizationJob.cs" />

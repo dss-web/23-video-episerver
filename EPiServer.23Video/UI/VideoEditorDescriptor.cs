@@ -7,8 +7,8 @@ using EPiServer.Shell.ObjectEditing.EditorDescriptors;
 
 namespace EPiCode.TwentyThreeVideo.UI
 {
-    [EditorDescriptorRegistration(TargetType = typeof(CategoryList))]
-    public class VideEditorDescriptor : EditorDescriptor
+    [EditorDescriptorRegistration(TargetType = typeof(PageReference))]
+    public class VideoEditorDescriptor : EditorDescriptor
     {
         public override void ModifyMetadata(
            ExtendedMetadata metadata,
