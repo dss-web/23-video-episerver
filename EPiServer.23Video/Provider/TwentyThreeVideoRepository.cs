@@ -48,6 +48,9 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             IPhotoService photoService = new PhotoService(apiProvider);
 
+            Visual.SiteService vc = new SiteService(apiProvider);
+            Visual.ISessionService ss = new SessionService(apiProvider);
+            
             PhotoListParameters p = photoListParameters;
 
             if (photoListParameters == null)
@@ -59,7 +62,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             p.Video = true;
 
             List<Photo> photos = photoService.GetList(p);
-            //Caching.VideoProviderCache.Instance.InnerCache.Add(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
+            //Caching.VideoProviderCache.Instance.InnerCache.Update(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
             return photos;
         }
 
@@ -69,7 +72,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             if (service.Update((int)photo.PhotoId, title: photo.Title) == false)
             {
-                // saved failed.
+                _log.ErrorFormat("23Video: Failed updating video with id {0}, title: {1}", photo.PhotoId, photo.Title);
             }
         }
 

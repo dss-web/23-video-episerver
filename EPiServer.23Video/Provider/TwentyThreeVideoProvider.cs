@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
+using EPiCode.TwentyThreeVideo.Data;
 using EPiCode.TwentyThreeVideo.Models;
+using EPiServer;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
-using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.Web;
 using log4net;
@@ -21,23 +18,16 @@ namespace EPiCode.TwentyThreeVideo.Provider
     {
         private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly List<BasicContent> _items = new List<BasicContent>();
-        private readonly SettingsRepository _settingsRepository;
+        private List<BasicContent> _items = new List<BasicContent>();
         private readonly IContentTypeRepository _contentTypeRepository;
-        private readonly VideoFolder _entryPoint;
-        private readonly ThumbnailManager _thumbnailManager;
+
+        private readonly IntermediateVideoDataRepository _intermediateVideoDataRepository;
 
         public TwentyThreeVideoProvider(IContentTypeRepository contentTypeRepository,
-            ThumbnailManager thumbnailManager,
-            VideoFolder entryPoint,
-            SettingsRepository settingsRepository)
+            IntermediateVideoDataRepository intermediateVideoDataRepository)
         {
             _contentTypeRepository = contentTypeRepository;
-            _entryPoint = entryPoint;
-            _settingsRepository = settingsRepository;
-            _thumbnailManager = thumbnailManager;
-            _settingsRepository = settingsRepository;
-
+            _intermediateVideoDataRepository = intermediateVideoDataRepository;
         }
 
         public override ContentProviderCapabilities ProviderCapabilities
@@ -45,79 +35,30 @@ namespace EPiCode.TwentyThreeVideo.Provider
             get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }
         }
 
-        #region ContentProvider
-
-        public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
-        {
-            base.Initialize(name, config);
-            CreateFoldersFromChannels();
-            var videoFolders = _items.ToList();
-            foreach (var basicContent in videoFolders)
-            {
-                if (basicContent is VideoFolder)
-                {
-                    var videos = TwentyThreeVideoRepository.GetVideoList(basicContent.ContentLink.ID);
-                    foreach (var item in videos)
-                    {
-                        var video =
-                            GetDefaultContent(LoadContent(basicContent.ContentLink, LanguageSelector.AutoDetect()),
-                                _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as
-                                Video;
-                        if (video != null)
-                        {
-                            _log.DebugFormat("23Video: Added video with name {0}", video.Name);
-                            PopulateVideo(video, item);
-                            _items.Add(video);
-                        }
-                        else
-                        {
-                            _log.InfoFormat("23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}", item.One);
-                        }
-
-                    }
-                }
-            }
-        }
-
-        private void CreateFoldersFromChannels()
-        {
-
-            try
-            {
-                List<Album> albums = TwentyThreeVideoRepository.GetChannelList();
-                foreach (var album in albums)
-                {
-                    var folder = GetDefaultContent(_entryPoint, _contentTypeRepository.Load<VideoFolder>().ID,
-                            LanguageSelector.AutoDetect()) as VideoFolder;
-
-                    if (folder == null) continue;
-
-                    if (album.AlbumId != null)
-                    {
-                        var id = (int)album.AlbumId;
-                        folder.ContentLink = new ContentReference(id, ProviderKey);
-                        folder.Name = album.Title;
-                        _items.Add(folder);
-                        _log.InfoFormat("23Video: Channel {0} created.", album.Title);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-             _log.Error(string.Format("23Video: Could not load channels from 23Video. Please check you settings in web.config "), ex);   
-            }
-            
-        }
-
-
-        protected override void SetCacheSettings(ContentReference parentLink, string urlSegment, IEnumerable<MatchingSegmentResult> childrenMatches, CacheSettings cacheSettings)
-        {
-            //cacheSettings.CacheKeys.Add(EPiServer.DataFactoryCache.PageCommonCacheKey(new ContentReference(contentReference.ID)));
-        }
-
         protected override IContent LoadContent(ContentReference contentLink, ILanguageSelector languageSelector)
         {
-            var item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink)); //?? TwentyThreeVideoRepository.GetVideo(contentLink.ID) as ICo;
+            var item = _items.FirstOrDefault(p => p.ContentLink.Equals(contentLink));
+            if (item == null)
+            {
+                item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
+            }
+
+            // LoadContent will be called after a autosave or after publish on the item since EPiServer will try to update properties in this method;
+            // EPiServer.Cms.Shell.UI.Rest.ContentChangeManager.UpdateContentProperties(ContentReference contentReference, IDictionary`2 properties, SaveAction saveAction). 
+            // The UpdateContentProperties requires a writable icontent object. So in the Save method we set work id to 1 to tell EPiServer that we have a new version and that the publish-button is enabled.
+            if (contentLink.WorkID > 0)
+            {
+                var video = item as Video;
+
+                // Only for vidoes, not videofolder
+                if (video != null)
+                {
+                    Video writeableVideo = video.CreateWritableClone() as Video;
+                    ((IVersionable)writeableVideo).Status = VersionStatus.CheckedOut;
+                    return writeableVideo;
+                }
+            }
+
             return item;
         }
 
@@ -150,6 +91,97 @@ namespace EPiCode.TwentyThreeVideo.Provider
             return ResolveContent(video);
         }
 
+        protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
+        {
+            var videoTypeId = _contentTypeRepository.Load(typeof(Video));
+            var videoFolderTypeId = _contentTypeRepository.Load(typeof(VideoFolder));
+            languageSpecific = false;
+            if (contentLink.CompareToIgnoreWorkID(EntryPoint))
+            {
+
+                var test =
+                    _items.Where(x => x.ContentTypeID.Equals(videoFolderTypeId.ID))
+                    .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(VideoFolder) }).ToList();
+                return test;
+
+            }
+            var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
+
+            return _items
+               .Where(p => p.ContentTypeID.Equals(videoTypeId.ID) && p.ParentLink.ID.Equals(content.ContentLink.ID))
+               .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(Video) }).ToList();
+        }
+
+        public override ContentReference Save(IContent content, SaveAction action)
+        {
+            var helper = new VideoHelper();
+            var newVersion = content as Video;
+         
+            if (content.ContentLink.WorkID != 0)
+            {
+                if (action == SaveAction.Publish && newVersion != null)
+                {
+                    TwentyThreeVideoRepository.UpdateVideo(new Photo()
+                    {
+                        PhotoId = Convert.ToInt32(newVersion.Id),
+                        Title = newVersion.Name
+                    });
+                    _intermediateVideoDataRepository.Update(newVersion);
+                    VideoSynchronizationEventHandler.DataStoreUpdated();
+
+                    // In LoadContent we check for the work id of IContent if changes has been done (work id > 0). If the id > 0
+                    // then we set the status to CheckedOut which will trigger the publish-button to be active. When we do the publish, 
+                    // we have to tell LoadContent that the work id == 0 so the publish-button will be inactive.
+                    return new ContentReference(int.Parse(newVersion.Id), 0, ProviderKey);
+                }
+                
+                //If we saved an item that already has a specific version, just return the current version...
+                return content.ContentLink;
+            }
+
+            //...otherwise save the content (which has been made a copy of the UI) to the local repository.
+            if (newVersion != null)
+            {
+                newVersion.Status = VersionStatus.CheckedOut;
+                newVersion.ContentLink = new ContentReference(int.Parse(newVersion.Id), 1, ProviderKey);
+            }
+            // New content
+            else
+            {
+                var mediaData = content as MediaData;
+
+                if (mediaData != null && mediaData.BinaryData != null)
+                {
+                    Blob blobData = ((MediaData)content).BinaryData;
+                    using (var stream = blobData.OpenRead())
+                    {
+                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, stream, content.ParentLink.ID);
+                        if (videoId != null)
+                        {
+                            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                            var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+                                        _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+                            var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
+                            helper.PopulateVideo(video, item);
+                            _items.Add(video);
+                            _intermediateVideoDataRepository.Update(video);
+                            VideoSynchronizationEventHandler.DataStoreUpdated();
+                            return video.ContentLink;
+                        }
+                    }
+                }
+            }
+            _items.Add(newVersion);
+            return newVersion.ContentLink;
+        }
+
+
+        public void RefreshItems(List<BasicContent> items)
+        {
+            _items = items;
+            this.ClearProviderPagesFromCache();
+        }
+
         protected ContentResolveResult ResolveContent(BasicContent video)
         {
             var contentItem = new ContentCoreData()
@@ -161,116 +193,5 @@ namespace EPiCode.TwentyThreeVideo.Provider
             return base.CreateContentResolveResult(contentItem);
         }
 
-        protected override IList<GetChildrenReferenceResult> LoadChildrenReferencesAndTypes(ContentReference contentLink, string languageId, out bool languageSpecific)
-        {
-            languageSpecific = false;
-            if (contentLink.CompareToIgnoreWorkID(EntryPoint))
-                return _items
-                    .Where(p => p is VideoFolder)
-                    .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(VideoFolder) }).ToList();
-            var content = LoadContent(contentLink, LanguageSelector.AutoDetect());
-            return _items
-               .Where(p => p is Video && p.ParentLink.ID.Equals(content.ContentLink.ID))
-               .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(Video) }).ToList();
-        }
-
-        public Video PopulateVideo(Video video, Photo item)
-        {
-            if (item.PhotoId != null)
-            {
-                int id = (int)(item.PhotoId);
-                video.VideoUrl = EmbedCode(item.PhotoId.ToString(), item.Token, item.VideoHD.Width ?? item.VideoMedium.Width ?? item.VideoSmall.Width, item.VideoHD.Height ?? item.VideoMedium.Height ?? item.VideoSmall.Height);
-                video.ContentLink = new ContentReference((id).GetHashCode(), ProviderKey);
-                video.Created = DateTime.Now.Subtract(new TimeSpan(2, 0, 0, 0));
-                video.Changed = video.Created;
-                video.IsPendingPublish = false;
-                video.StartPublish = DateTime.Now.Subtract(new TimeSpan(1, 0, 0, 0));
-                video.Status = VersionStatus.Published;
-                video.Id = id.ToString();
-                video.ContentGuid = StringToGuid(id.ToString());
-                video.VideoId = item.PhotoId.ToString();
-                video.Name = item.Title;
-                video.BinaryData = GetThumbnail(item);
-                video.Thumbnail = _thumbnailManager.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
-                video.oEmbedVideoName = item.One;
-
-                if (_settingsRepository.oEmbedIsEnabled)
-                {
-                    video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
-                }
-
-                _log.InfoFormat("23Video: Created IContent for video with id {0} and name {1}", id, video.Name);
-
-            }
-            return video;
-        }
-
-        public static string EmbedCode(string photoId, string photoToken, int? width, int? height)
-        {
-            string domain = Client.Settings.Domain;
-
-            string widthString = width.ToString();
-
-            string heightString = (height == null ? Math.Round(width.Value / 16.0 * 9.0).ToString() : height.Value.ToString());
-
-            return "<iframe src=\"http://" + domain + "/v.ihtml?token=" + photoToken + "&photo%5fid=" + photoId + "\" width=\"" + widthString + "\" height=\"" + heightString + "\" frameborder=\"0\" border=\"0\" scrolling=\"no\"></iframe>";
-
-        }
-
-        public override ContentReference Save(IContent content, SaveAction action)
-        {
-            var mediaData = content as MediaData;
-
-            if (mediaData != null && mediaData.BinaryData != null)
-            {
-                Blob blobData = ((MediaData)content).BinaryData;
-
-                using (var stream = blobData.OpenRead())
-                {
-                    int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, stream, content.ParentLink.ID);
-                    if (videoId != null)
-                    {
-                        BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-                        var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-                                    _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
-
-                        var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
-                        PopulateVideo(video, item);
-
-                        _items.Add(video);
-                        return video.ContentLink;
-
-                    }
-                }
-            }
-            return content.ContentLink; //;.EmptyReference;
-        }
-
-        #endregion
-
-        #region Helpers
-
-        private static Guid StringToGuid(string value)
-        {
-            MD5 md5Hasher = MD5.Create();
-            byte[] data = md5Hasher.ComputeHash(Encoding.Default.GetBytes(value));
-            return new Guid(data);
-        }
-
-        private Blob GetThumbnail(Photo item)
-        {
-            var webClient = new WebClient();
-            var url = "http://" + Client.Settings.Domain + item.Original.Download;
-            var imageData = webClient.DownloadData(url);
-            string container = item.PhotoId.ToString();
-            var blob = BlobFactory.Instance.GetBlob(new Uri(string.Format("{0}://{1}/{2}/{3}", Blob.BlobUriScheme, Blob.DefaultProvider, container, "original.jpg")));
-            using (var stream = new MemoryStream(imageData))
-            {
-                blob.Write(stream);
-            }
-            return blob;
-        }
-
-        #endregion
     }
 }

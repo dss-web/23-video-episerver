@@ -14,11 +14,11 @@ namespace EPiCode.TwentyThreeVideo.UI
     {
         public static string ProvideKeyValue
         {
-            get { return "23Video"; }
+            get { return Constants.ProviderKey; }
         }
         public static string RepositoryKey
         {
-            get { return "23video"; }
+            get { return Constants.ProviderKey; }
         }
 
         public override string Key
@@ -28,7 +28,7 @@ namespace EPiCode.TwentyThreeVideo.UI
 
         public override string Name
         {
-            get { return "23Video"; }
+            get { return Constants.ProviderKey; }
         }
 
         public override IEnumerable<Type> ContainedTypes
