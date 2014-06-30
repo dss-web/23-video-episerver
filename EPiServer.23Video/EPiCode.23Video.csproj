@@ -200,6 +200,7 @@
     <Compile Include="Models\Video.cs" />
     <Compile Include="Models\VideoFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\TwentyThreeUIHint.cs" />
     <Compile Include="UI\TwentyThreeVideoComponent.cs" />
     <Compile Include="UI\TwentyThreeVideoRepositoryDescriptor.cs" />
   </ItemGroup>
