@@ -1,35 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using EPiCode.TwentyThreeVideo.Models;
-using EPiServer;
 using EPiServer.Core;
-using EPiServer.ServiceLocation;
-using EPiServer.Shell.ObjectEditing;
+using EPiServer.Shell;
 using EPiServer.Shell.ObjectEditing.EditorDescriptors;
 
 namespace EPiCode.TwentyThreeVideo.UI
 {
     [EditorDescriptorRegistration(TargetType = typeof(ContentReference), UIHint = "twentythreevideo")]
-    public class TwentyThreeVideoEditorDescriptor : ContentReferenceEditorDescriptor<Video> 
+    public class TwentyThreeVideoEditorDescriptor : ContentReferenceEditorDescriptor<Video>
     {
-        public override IEnumerable<ContentReference> Roots
+        public override string RepositoryKey
         {
-            get
-            {
-                var c = ServiceLocator.Current.GetInstance<IContentRepository>();
-                var videoRoot = c.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
+            get { return Constants.ProviderKey; }
+        }
+    }
 
-                if (videoRoot != null)
-                {
-                    IEnumerable<VideoFolder> videofolders =
-                        DataFactory.Instance.GetChildren<VideoFolder>(videoRoot.ContentLink);
-
-                    foreach (var videofolder in videofolders)
-                    {
-                        yield return videofolder.ContentLink;
-                    }
-                }
-            }
+    [UIDescriptorRegistration]
+    public class TwentyThreeVideoUIDescriptor : UIDescriptor<Video>
+    {
+        public TwentyThreeVideoUIDescriptor()
+        {
+            ContainerTypes = new Type[] { typeof(VideoFolder) };
         }
     }
 
