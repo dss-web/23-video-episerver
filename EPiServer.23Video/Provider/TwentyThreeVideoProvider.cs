@@ -43,6 +43,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
             }
 
+            
+
             // LoadContent will be called after a autosave or after publish on the item since EPiServer will try to update properties in this method;
             // EPiServer.Cms.Shell.UI.Rest.ContentChangeManager.UpdateContentProperties(ContentReference contentReference, IDictionary`2 properties, SaveAction saveAction). 
             // The UpdateContentProperties requires a writable icontent object. So in the Save method we set work id to 1 to tell EPiServer that we have a new version and that the publish-button is enabled.
@@ -126,20 +128,23 @@ namespace EPiCode.TwentyThreeVideo.Provider
                         PhotoId = Convert.ToInt32(newVersion.Id),
                         Title = newVersion.Name
                     });
+                    newVersion.ContentLink = new ContentReference(int.Parse(newVersion.Id), 0, ProviderKey);
                     _intermediateVideoDataRepository.Update(newVersion);
                     VideoSynchronizationEventHandler.DataStoreUpdated();
 
                     // In LoadContent we check for the work id of IContent if changes has been done (work id > 0). If the id > 0
                     // then we set the status to CheckedOut which will trigger the publish-button to be active. When we do the publish, 
                     // we have to tell LoadContent that the work id == 0 so the publish-button will be inactive.
-                    return new ContentReference(int.Parse(newVersion.Id), 0, ProviderKey);
+                    return newVersion.ContentLink;
                 }
                 
                 //If we saved an item that already has a specific version, just return the current version...
+                _items.RemoveAt(_items.FindIndex(x => x.ContentLink.Equals(newVersion.ContentLink))); 
+                _items.Add(newVersion);
                 return content.ContentLink;
             }
 
-            //...otherwise save the content (which has been made a copy of the UI) to the local repository.
+            // ...otherwise save the content (which has been made a copy of the UI) to the local repository.
             if (newVersion != null)
             {
                 newVersion.Status = VersionStatus.CheckedOut;
@@ -149,7 +154,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
             else
             {
                 var mediaData = content as MediaData;
-
                 if (mediaData != null && mediaData.BinaryData != null)
                 {
                     Blob blobData = ((MediaData)content).BinaryData;

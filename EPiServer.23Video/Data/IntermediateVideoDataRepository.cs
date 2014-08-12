@@ -70,7 +70,7 @@ namespace EPiCode.TwentyThreeVideo.Data
         public List<BasicContent> Update(BasicContent content)
         {
             var items = Load();
-            var existingItem = items.Where(x => x.ContentLink.Equals(content.ContentLink)).FirstOrDefault();
+            var existingItem = items.FirstOrDefault(x => x.ContentLink.CompareToIgnoreWorkID(content.ContentLink));
             if (existingItem != null)
             {
                 items.Remove(existingItem);

@@ -41,7 +41,7 @@ function (
     // tags:
     //      public
 
-    return declare("TwentyThreeVideo",[HierarchicalList], {
+    return declare("TwentyThreeVideo", [HierarchicalList], {
 
         res: resources,
 
@@ -88,14 +88,14 @@ function (
             //      protected
 
             this.inherited(arguments);
-           
+
             domClass.add(this.list.grid.domNode, "epi-thumbnailContentList");
 
-            this.own(
-                on(this.list, "createItemAction", lang.hitch(this, function () {
-                    this.model._commandRegistry.uploadDefault.command.execute();
-                }))
-            );
+            //this.own(
+            //    on(this.list, "createItemAction", lang.hitch(this, function () {
+            //        this.model._commandRegistry.uploadDefault.command.execute();
+            //    }))
+            //);
         }
 
     });
