@@ -72,7 +72,7 @@ function (
             this.list.set("noDataMessage", this.res.nocontent);
 
             this.own(
-                this.model.getCommand("upload").watch("canExecute", lang.hitch(this, function (name, oldValue, newValue) {
+                this.model.getCommand("uploadDefault").watch("canExecute", lang.hitch(this, function (name, oldValue, newValue) {
                     this._toggleCreateContentArea(newValue);
                 }))
             );
@@ -91,11 +91,11 @@ function (
 
             domClass.add(this.list.grid.domNode, "epi-thumbnailContentList");
 
-            //this.own(
-            //    on(this.list, "createItemAction", lang.hitch(this, function () {
-            //        this.model._commandRegistry.uploadDefault.command.execute();
-            //    }))
-            //);
+            this.own(
+                on(this.list, "createItemAction", lang.hitch(this, function () {
+                    this.model._commandRegistry.uploadDefault.command.execute();
+                }))
+            );
         }
 
     });

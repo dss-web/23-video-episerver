@@ -492,25 +492,24 @@ function (
                     isAvailable: this.menuType.TREE | this.menuType.LIST
                 },
 
-                //uploadDefault: {
-                //    command: new UploadContentCommand(lang.mixin({
-                //        iconClass: "epi-iconPlus",
-                //        label: resources.command.label,
-                //        resources: resources,
-                //        viewModel: this
-                //    }, settings)),
-                //    isAvailable: false
-                //},
-                upload: {
+                uploadDefault: {
                     command: new UploadContentCommand(lang.mixin({
-                        category: "context",
                         iconClass: "epi-iconUpload",
                         label: resources.linktocreateitem,
                         viewModel: this
                     }, settings)),
                     isAvailable: this.menuType.ROOT | this.menuType.TREE,
-                    order: 2
                 },
+                //upload: {
+                //    command: new UploadContentCommand(lang.mixin({
+                //        category: "context",
+                //        iconClass: "epi-iconUpload",
+                //        label: resources.linktocreateitem,
+                //        viewModel: this
+                //    }, settings)),
+                //    isAvailable: this.menuType.ROOT | this.menuType.TREE,
+                //    order: 2
+                //},
                 trash: {
                     command: new ViewTrashCommand({ typeIdentifiers: this.mainNavigationTypes }),
                     order: 60
@@ -548,8 +547,8 @@ function (
 
             this.pseudoContextualCommands = this._getPseudoContextualCommands();
 
-            //   this.pseudoContextualCommands.push(this._commandRegistry.uploadDefault.command);
-            this.pseudoContextualCommands.push(this._commandRegistry.upload.command);
+            this.pseudoContextualCommands.push(this._commandRegistry.uploadDefault.command);
+            //   this.pseudoContextualCommands.push(this._commandRegistry.upload.command);
         },
 
         _updateListQuery: function (itemRef) {
@@ -695,8 +694,8 @@ function (
 
             this.inherited(arguments);
 
-            //  this._commandRegistry.uploadDefault.command.set("model", model);
-            this._commandRegistry.upload.command.set("model", model);
+            this._commandRegistry.uploadDefault.command.set("model", model);
+            //this._commandRegistry.upload.command.set("model", model);
         },
 
         upload: function (/*Array*/fileList, /*String?*/targetId, /*Boolean?*/createAsLocalAsset) {
