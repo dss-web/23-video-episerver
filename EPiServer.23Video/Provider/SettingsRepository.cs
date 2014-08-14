@@ -52,7 +52,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             private set { }
         }
 
-        public  string Domain
+        public string Domain
         {
             get { return GetAppSetting("TwentythreeVideoDomain"); }
             private set { }

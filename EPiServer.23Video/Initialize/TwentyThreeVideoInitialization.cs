@@ -1,7 +1,8 @@
 ﻿ using System;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
+ using System.Net;
+ using System.Threading.Tasks;
 using EPiCode.TwentyThreeVideo.Data;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer;
@@ -28,6 +29,9 @@ namespace EPiCode.TwentyThreeVideo.Initialize
 
         public void Initialize(InitializationEngine context)
         {
+            var domain = SettingsRepository.Service.Domain;
+            WebRequest.RegisterPrefix("https://" + domain, TwentyThreeCreatorRequestCreator.TwentyThreeHttp);
+            WebRequest.RegisterPrefix("http://" + domain, TwentyThreeCreatorRequestCreator.TwentyThreeHttp);
             if (Client.Settings.Enabled != null)
             {
                 bool enabled = false;

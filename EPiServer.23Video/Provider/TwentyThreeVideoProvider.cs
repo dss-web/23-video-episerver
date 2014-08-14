@@ -168,7 +168,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                        //     helper.PopulateVideo(video, item);
                             //_items.Add(video);
                             //_intermediateVideoDataRepository.Update(video);
-                            VideoSynchronizationEventHandler.DataStoreUpdated();
+                            
                             return ContentReference.StartPage;
                         }
                     

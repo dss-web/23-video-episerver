@@ -193,6 +193,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\TwentyThreeVideoController.cs" />
+    <Compile Include="TwentyThreeCreatorRequestCreator.cs" />
     <Compile Include="Data\IntermediateVideoDataModel.cs" />
     <Compile Include="Data\IntermediateVideoDataRepository.cs" />
     <Compile Include="Data\VideoContentType.cs" />
@@ -236,7 +237,6 @@
     </None>
     <None Include="readme.md" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

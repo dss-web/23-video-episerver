@@ -5,6 +5,7 @@ using System.Net;
 using System.Web.Script.Serialization;
 using System.Web.WebPages.Scope;
 using DotNetOpenAuth.Messaging;
+using EPiCode.TwentyThreeVideo.Data;
 using EPiCode.TwentyThreeVideo.oEmbed;
 using EPiServer.Framework.Blobs;
 using log4net;
@@ -81,7 +82,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         public static int? UploadVideo(string filename, Blob stream, int channel)
         {
-           // IPhotoService service = new PhotoService(Client.ApiProvider);
+            // IPhotoService service = new PhotoService(Client.ApiProvider);
             string fileExtention = Path.GetExtension(filename);
 
             if (fileExtention == null)
@@ -106,17 +107,25 @@ namespace EPiCode.TwentyThreeVideo.Provider
             worker.RunWorkerAsync();
 
 
+
             return 0;
             // return service.Upload(filename, fileExtention.TrimStart('.'), stream,channel, title: filename);
         }
 
         private static int? FileUpload(string filename, string fileExtention, Blob blob, int channel, string title)
         {
-            using (var stream = blob.OpenRead())
+       
+            IPhotoService service = new PhotoService(Client.ApiProvider);
+            var token = service.GetUploadToken(" ", false, null, channel, filename, "", "", true, 180, 5);
+            using (FileStream stream = blob.OpenRead() as FileStream)
             {
-                IPhotoService service = new PhotoService(Client.ApiProvider);
-                return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: title);
+                token.ValidUntil = int.MaxValue;
+                service.RedeemUploadToken(filename, fileExtention, stream, token.UploadToken);
+                // return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: title);
             }
+
+            VideoSynchronizationEventHandler.DataStoreUpdated();
+            return 0;
         }
 
         public static List<Album> GetChannelList()
