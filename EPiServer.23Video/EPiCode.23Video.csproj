@@ -47,6 +47,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\EPiServer.CMS.UI.Core.7.6.1\lib\net40\CMS.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetOpenAuth, Version=3.4.5.10202, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>References\DotNetOpenAuth.dll</HintPath>
+    </Reference>
     <Reference Include="EPiServer, Version=7.5.1003.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\EPiServer.CMS.Core.7.5.1003.0\lib\net40\EPiServer.dll</HintPath>
@@ -223,7 +227,9 @@
     <None Include="ClientResources\module.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="EPiCode.23Video.Core.nuspec" />
+    <None Include="EPiCode.23Video.Core.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="EPiCode.23Video.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

@@ -157,22 +157,21 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 if (mediaData != null && mediaData.BinaryData != null)
                 {
                     Blob blobData = ((MediaData)content).BinaryData;
-                    using (var stream = blobData.OpenRead())
-                    {
-                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, stream, content.ParentLink.ID);
+          
+                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
                         if (videoId != null)
                         {
-                            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-                            var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-                                        _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
-                            var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
-                            helper.PopulateVideo(video, item);
-                            _items.Add(video);
-                            _intermediateVideoDataRepository.Update(video);
+                        //    BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                            //var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+                            //            _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+                            //var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
+                       //     helper.PopulateVideo(video, item);
+                            //_items.Add(video);
+                            //_intermediateVideoDataRepository.Update(video);
                             VideoSynchronizationEventHandler.DataStoreUpdated();
-                            return video.ContentLink;
+                            return ContentReference.StartPage;
                         }
-                    }
+                    
                 }
             }
             _items.Add(newVersion);

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Web.WebPages.Scope;
+using DotNetOpenAuth.Messaging;
 using EPiCode.TwentyThreeVideo.oEmbed;
+using EPiServer.Framework.Blobs;
 using log4net;
 using Visual;
 using Visual.Domain;
@@ -50,7 +53,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             Visual.SiteService vc = new SiteService(apiProvider);
             Visual.ISessionService ss = new SessionService(apiProvider);
-            
+
             PhotoListParameters p = photoListParameters;
 
             if (photoListParameters == null)
@@ -76,20 +79,44 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
         }
 
-        public static int? UploadVideo(string filename, Stream stream, int channel)
+        public static int? UploadVideo(string filename, Blob stream, int channel)
         {
-            IPhotoService service = new PhotoService(Client.ApiProvider);
-
+           // IPhotoService service = new PhotoService(Client.ApiProvider);
             string fileExtention = Path.GetExtension(filename);
 
             if (fileExtention == null)
             {
                 //TODO: Choose a default extention if file has no extention.
                 //default extention if missing
-                fileExtention = ".mp4";
+                fileExtention = ".mp4";//aosrei
             }
+            //var token = service.GetUploadToken(" ", false, null, channel, filename, "", "", true, 180, 1);
+            //service.RedeemUploadToken(filename, fileExtention, stream, token.UploadToken);
+            //var uploadToken = token.UploadToken;
+            // return token.UploadToken
+            //int num = filename.LastIndexOf('\\');
+            //var _provider = Client.ApiProvider;
+            //var xPathNavigator = _provider.DoRequest(new MessageReceivingEndpoint(_provider.GetRequestUrl("/api/photo/redeem-upload-token", (List<string>)null), HttpDeliveryMethods.AuthorizationHeaderRequest | HttpDeliveryMethods.PostRequest), new List<MultipartPostPart>()
+            //  {
+            //    MultipartPostPart.CreateFormFilePart("file", num == -1 ? filename : filename.Substring(num + 1), fileExtention, stream),
+            //    MultipartPostPart.CreateFormPart("upload_token", uploadToken)
+            //  });
+            var worker = new BackgroundWorker();
+            worker.DoWork += (obj, e) => FileUpload(filename, fileExtention.TrimStart('.'), stream, channel, filename);
+            worker.RunWorkerAsync();
 
-            return service.Upload(filename: filename, fileContentType: fileExtention.TrimStart('.'), filestream: stream, albumId: channel, title: filename);
+
+            return 0;
+            // return service.Upload(filename, fileExtention.TrimStart('.'), stream,channel, title: filename);
+        }
+
+        private static int? FileUpload(string filename, string fileExtention, Blob blob, int channel, string title)
+        {
+            using (var stream = blob.OpenRead())
+            {
+                IPhotoService service = new PhotoService(Client.ApiProvider);
+                return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: title);
+            }
         }
 
         public static List<Album> GetChannelList()
@@ -115,7 +142,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             string jsonResponse = string.Empty;
 
-            string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName); 
+            string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName);
 
             var webClient = new WebClient();
 
@@ -125,7 +152,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
             catch (WebException exception)
             {
-                    _log.ErrorFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
+                _log.ErrorFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
             }
 
             if (!string.IsNullOrEmpty(jsonResponse))
