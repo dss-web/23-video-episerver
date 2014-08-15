@@ -80,53 +80,23 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
         }
 
-        public static int? UploadVideo(string filename, Blob stream, int channel)
+        public static int? UploadVideo(string filename, Blob blob, int channel)
         {
-            // IPhotoService service = new PhotoService(Client.ApiProvider);
             string fileExtention = Path.GetExtension(filename);
-
             if (fileExtention == null)
             {
-                //TODO: Choose a default extention if file has no extention.
                 //default extention if missing
                 fileExtention = ".mp4";//aosrei
             }
-            //var token = service.GetUploadToken(" ", false, null, channel, filename, "", "", true, 180, 1);
-            //service.RedeemUploadToken(filename, fileExtention, stream, token.UploadToken);
-            //var uploadToken = token.UploadToken;
-            // return token.UploadToken
-            //int num = filename.LastIndexOf('\\');
-            //var _provider = Client.ApiProvider;
-            //var xPathNavigator = _provider.DoRequest(new MessageReceivingEndpoint(_provider.GetRequestUrl("/api/photo/redeem-upload-token", (List<string>)null), HttpDeliveryMethods.AuthorizationHeaderRequest | HttpDeliveryMethods.PostRequest), new List<MultipartPostPart>()
-            //  {
-            //    MultipartPostPart.CreateFormFilePart("file", num == -1 ? filename : filename.Substring(num + 1), fileExtention, stream),
-            //    MultipartPostPart.CreateFormPart("upload_token", uploadToken)
-            //  });
-            var worker = new BackgroundWorker();
-            worker.DoWork += (obj, e) => FileUpload(filename, fileExtention.TrimStart('.'), stream, channel, filename);
-            worker.RunWorkerAsync();
 
-
-
-            return 0;
-            // return service.Upload(filename, fileExtention.TrimStart('.'), stream,channel, title: filename);
-        }
-
-        private static int? FileUpload(string filename, string fileExtention, Blob blob, int channel, string title)
-        {
-       
             IPhotoService service = new PhotoService(Client.ApiProvider);
-            var token = service.GetUploadToken(" ", false, null, channel, filename, "", "", true, 180, 5);
-            using (FileStream stream = blob.OpenRead() as FileStream)
+            using (var stream = blob.OpenRead() as FileStream)
             {
-                token.ValidUntil = int.MaxValue;
-                service.RedeemUploadToken(filename, fileExtention, stream, token.UploadToken);
-                // return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: title);
-            }
+                return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: filename);
 
-            VideoSynchronizationEventHandler.DataStoreUpdated();
-            return 0;
+            }
         }
+
 
         public static List<Album> GetChannelList()
         {

@@ -161,15 +161,15 @@ namespace EPiCode.TwentyThreeVideo.Provider
                         int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
                         if (videoId != null)
                         {
-                        //    BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-                            //var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-                            //            _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
-                            //var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
-                       //     helper.PopulateVideo(video, item);
-                            //_items.Add(video);
-                            //_intermediateVideoDataRepository.Update(video);
-                            
-                            return ContentReference.StartPage;
+                            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                            var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+                                        _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+                            var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
+                            helper.PopulateVideo(video, item);
+                            _items.Add(video);
+                            _intermediateVideoDataRepository.Update(video);
+
+                            return video.ContentLink;
                         }
                     
                 }
