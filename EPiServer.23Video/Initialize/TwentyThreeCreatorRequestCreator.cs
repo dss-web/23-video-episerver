@@ -23,7 +23,7 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             public WebRequest Create(Uri uri)
             {       
                     var twentyThreeHttpWebRequest = (HttpWebRequest)WebRequest.CreateDefault(uri);
-                    twentyThreeHttpWebRequest.Timeout = 2000000;
+                    twentyThreeHttpWebRequest.Timeout = 3600000;
                     return twentyThreeHttpWebRequest;
             }
         }
