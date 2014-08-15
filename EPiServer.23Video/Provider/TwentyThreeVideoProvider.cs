@@ -42,9 +42,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
             {
                 item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
             }
-
-            
-
             // LoadContent will be called after a autosave or after publish on the item since EPiServer will try to update properties in this method;
             // EPiServer.Cms.Shell.UI.Rest.ContentChangeManager.UpdateContentProperties(ContentReference contentReference, IDictionary`2 properties, SaveAction saveAction). 
             // The UpdateContentProperties requires a writable icontent object. So in the Save method we set work id to 1 to tell EPiServer that we have a new version and that the publish-button is enabled.
@@ -144,6 +141,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 return content.ContentLink;
             }
 
+           
+
             // ...otherwise save the content (which has been made a copy of the UI) to the local repository.
             if (newVersion != null)
             {
@@ -178,7 +177,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
             return newVersion.ContentLink;
         }
 
-
         public void RefreshItems(List<BasicContent> items)
         {
             _items = items;
@@ -195,6 +193,5 @@ namespace EPiCode.TwentyThreeVideo.Provider
             };
             return base.CreateContentResolveResult(contentItem);
         }
-
     }
 }

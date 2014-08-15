@@ -3,7 +3,7 @@ using System.Net;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
-    public static class TwentyThreeCreatorRequestCreator
+    public static class TwentyThreeRequestCreator
     {
         private static IWebRequestCreate _twentyThreeCreator;
         public static IWebRequestCreate TwentyThreeHttp

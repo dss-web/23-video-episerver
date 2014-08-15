@@ -30,8 +30,8 @@ namespace EPiCode.TwentyThreeVideo.Initialize
         public void Initialize(InitializationEngine context)
         {
             var domain = SettingsRepository.Service.Domain;
-            WebRequest.RegisterPrefix("https://" + domain, TwentyThreeCreatorRequestCreator.TwentyThreeHttp);
-            WebRequest.RegisterPrefix("http://" + domain, TwentyThreeCreatorRequestCreator.TwentyThreeHttp);
+            WebRequest.RegisterPrefix("https://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
+            WebRequest.RegisterPrefix("http://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
             if (Client.Settings.Enabled != null)
             {
                 bool enabled = false;

@@ -193,10 +193,11 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\TwentyThreeVideoController.cs" />
-    <Compile Include="Initialize\TwentyThreeCreatorRequestCreator.cs" />
+    <Compile Include="Initialize\TwentyThreeRequestCreator.cs" />
     <Compile Include="Data\IntermediateVideoDataModel.cs" />
     <Compile Include="Data\IntermediateVideoDataRepository.cs" />
     <Compile Include="Data\VideoContentType.cs" />
+    <Compile Include="Provider\VideoSearchProvider.cs" />
     <Compile Include="VideoHelper.cs" />
     <Compile Include="oEmbed\oEmbedResponse.cs" />
     <Compile Include="Provider\Client.cs" />

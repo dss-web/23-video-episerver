@@ -21,6 +21,11 @@ namespace EPiCode.TwentyThreeVideo.UI
             get { return Constants.ProviderKey; }
         }
 
+        public override string SearchArea
+        {
+            get { return "ttv"; }
+        }
+
         public override string Key
         {
             get { return RepositoryKey; }
@@ -41,10 +46,10 @@ namespace EPiCode.TwentyThreeVideo.UI
         {
             get
             {
-                return (IEnumerable<Type>)new Type[2]
-        {
-          typeof (ContentFolder), typeof(IContent)
-        };
+                return new Type[2]
+                        {
+                          typeof (ContentFolder), typeof(VideoFolder)
+                        };
             }
         }
 
@@ -79,7 +84,7 @@ namespace EPiCode.TwentyThreeVideo.UI
         {
           ContentReference.RootPage.ToString(),
           ContentReference.WasteBasket.ToString(),
-          "3"
+          ContentReference.GlobalBlockFolder.ToString()
         };
             }
         }
