@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace EPiCode.TwentyThreeVideo
+namespace EPiCode.TwentyThreeVideo.Initialize
 {
     public static class TwentyThreeCreatorRequestCreator
     {
