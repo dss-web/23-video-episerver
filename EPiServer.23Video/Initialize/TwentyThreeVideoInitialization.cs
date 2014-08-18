@@ -9,7 +9,8 @@ using EPiServer;
 using EPiServer.Configuration;
 using EPiServer.Core;
 using EPiServer.Data;
-using EPiServer.DataAbstraction;
+ using EPiServer.Data.Cache;
+ using EPiServer.DataAbstraction;
 using EPiServer.DataAbstraction.RuntimeModel;
 using EPiServer.DataAccess;
 using EPiServer.Framework;
@@ -29,9 +30,6 @@ namespace EPiCode.TwentyThreeVideo.Initialize
 
         public void Initialize(InitializationEngine context)
         {
-            var domain = SettingsRepository.Service.Domain;
-            WebRequest.RegisterPrefix("https://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
-            WebRequest.RegisterPrefix("http://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
             if (Client.Settings.Enabled != null)
             {
                 bool enabled = false;
@@ -45,6 +43,16 @@ namespace EPiCode.TwentyThreeVideo.Initialize
                     }
                 }
             }
+
+            var domain = SettingsRepository.Service.Domain;
+            WebRequest.RegisterPrefix("https://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
+            WebRequest.RegisterPrefix("http://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
+
+            // Register 23Video IContentData type
+            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<VideoFolder>>();
+            registerFolder.RegisterType();
+            var registerVideo = context.Locate.Advanced.GetInstance<SingleModelRegister<Video>>();
+            registerVideo.RegisterType();
 
             var contentRepository = context.Locate.ContentRepository();
             var entryPoint = contentRepository.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
