@@ -81,12 +81,10 @@ namespace EPiCode.TwentyThreeVideo.Provider
         protected override ContentResolveResult ResolveContent(Guid contentGuid)
         {
             var video = _items.FirstOrDefault(p => p.ContentGuid.Equals(contentGuid));
-
             if (video == null)
             {
                 return base.ResolveContent(contentGuid);
             }
-
             return ResolveContent(video);
         }
 
@@ -97,7 +95,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
             languageSpecific = false;
             if (contentLink.CompareToIgnoreWorkID(EntryPoint))
             {
-
                 var test =
                     _items.Where(x => x.ContentTypeID.Equals(videoFolderTypeId.ID))
                     .Select(p => new GetChildrenReferenceResult() { ContentLink = p.ContentLink, ModelType = typeof(VideoFolder) }).ToList();
@@ -115,7 +112,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             var helper = new VideoHelper();
             var newVersion = content as Video;
-         
+
             if (content.ContentLink.WorkID != 0)
             {
                 if (action == SaveAction.Publish && newVersion != null)
@@ -134,15 +131,12 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     // we have to tell LoadContent that the work id == 0 so the publish-button will be inactive.
                     return newVersion.ContentLink;
                 }
-                
+
                 //If we saved an item that already has a specific version, just return the current version...
-                _items.RemoveAt(_items.FindIndex(x => x.ContentLink.Equals(newVersion.ContentLink))); 
+                _items.RemoveAt(_items.FindIndex(x => x.ContentLink.Equals(newVersion.ContentLink)));
                 _items.Add(newVersion);
                 return content.ContentLink;
             }
-
-           
-
             // ...otherwise save the content (which has been made a copy of the UI) to the local repository.
             if (newVersion != null)
             {
@@ -156,21 +150,18 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 if (mediaData != null && mediaData.BinaryData != null)
                 {
                     Blob blobData = ((MediaData)content).BinaryData;
-          
-                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
-                        if (videoId != null)
-                        {
-                            BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-                            var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-                                        _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
-                            var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
-                            helper.PopulateVideo(video, item);
-                            _items.Add(video);
-                            _intermediateVideoDataRepository.Update(video);
-
-                            return video.ContentLink;
-                        }
-                    
+                    int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
+                    if (videoId != null)
+                    {
+                        BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                        var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+                                    _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+                        var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
+                        helper.PopulateVideo(video, item);
+                        _items.Add(video);
+                        _intermediateVideoDataRepository.Update(video);
+                        return video.ContentLink;
+                    }
                 }
             }
             _items.Add(newVersion);

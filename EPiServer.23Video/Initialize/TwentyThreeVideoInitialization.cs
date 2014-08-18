@@ -46,13 +46,6 @@ namespace EPiCode.TwentyThreeVideo.Initialize
                 }
             }
 
-            // TODO: Now that video and videofolder has got ContentType attribut on the class, there should be any need for these 4 lines of code.
-            // Register 23Video IContentData type 
-            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<VideoFolder>>();
-            registerFolder.RegisterType();
-            var registerVideo = context.Locate.Advanced.GetInstance<SingleModelRegister<Video>>();
-            registerVideo.RegisterType();
-
             var contentRepository = context.Locate.ContentRepository();
             var entryPoint = contentRepository.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
             if (entryPoint == null)
