@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -128,17 +129,17 @@ namespace EPiCode.TwentyThreeVideo.Provider
             try
             {
                 jsonResponse = webClient.DownloadString(endpoint);
+
+                if (!string.IsNullOrEmpty(jsonResponse))
+                {             
+                    var jSerialize = new JavaScriptSerializer();
+                    var oEmbedResponse = jSerialize.Deserialize<oEmbedResponse>(jsonResponse);
+                    return oEmbedResponse.RenderMarkup();
+                }
             }
-            catch (WebException exception)
+            catch (Exception exception)
             {
                 _log.ErrorFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
-            }
-
-            if (!string.IsNullOrEmpty(jsonResponse))
-            {
-                var jSerialize = new JavaScriptSerializer();
-                var oEmbedResponse = jSerialize.Deserialize<oEmbedResponse>(jsonResponse);
-                return oEmbedResponse.RenderMarkup();
             }
 
             return string.Empty;
