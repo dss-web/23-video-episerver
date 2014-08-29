@@ -89,15 +89,20 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 //default extention if missing
                 fileExtention = ".mp4";//aosrei
             }
-
-            IPhotoService service = new PhotoService(Client.ApiProvider);
-            using (var stream = blob.OpenRead() as FileStream)
+            try
             {
-                return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: filename);
-
+                IPhotoService service = new PhotoService(Client.ApiProvider);
+                using (var stream = blob.OpenRead() as FileStream)
+                {
+                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: filename);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error("Error uploading video to 23 Video:" + ex);
+                throw;
             }
         }
-
 
         public static List<Album> GetChannelList()
         {
@@ -131,7 +136,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 jsonResponse = webClient.DownloadString(endpoint);
 
                 if (!string.IsNullOrEmpty(jsonResponse))
-                {             
+                {
                     var jSerialize = new JavaScriptSerializer();
                     var oEmbedResponse = jSerialize.Deserialize<oEmbedResponse>(jsonResponse);
                     return oEmbedResponse.RenderMarkup();
