@@ -94,13 +94,13 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 IPhotoService service = new PhotoService(Client.ApiProvider);
                 using (var stream = blob.OpenRead() as FileStream)
                 {
-                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, channel, title: filename);
+                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: filename);
                 }
             }
             catch (Exception ex)
             {
                 _log.Error("Error uploading video to 23 Video:" + ex);
-                throw;
+                throw ex;
             }
         }
 

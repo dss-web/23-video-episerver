@@ -150,17 +150,29 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 if (mediaData != null && mediaData.BinaryData != null)
                 {
                     Blob blobData = ((MediaData)content).BinaryData;
-                    int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
-                    if (videoId != null)
+                    try
+                    {
+                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
+                        if (videoId != null)
+                        {
+
+                            var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
+                                        _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
+                            var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
+                            helper.PopulateVideo(video, item);
+                            _items.Add(video);
+                            _intermediateVideoDataRepository.Update(video);
+                            return video.ContentLink;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error("An error occured while uploading and creating video object:" + ex);
+                        throw;
+                    }
+                    finally
                     {
                         BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
-                        var video = GetDefaultContent(LoadContent(content.ParentLink, LanguageSelector.AutoDetect()),
-                                    _contentTypeRepository.Load<Video>().ID, LanguageSelector.AutoDetect()) as Video;
-                        var item = TwentyThreeVideoRepository.GetVideo((int)videoId);
-                        helper.PopulateVideo(video, item);
-                        _items.Add(video);
-                        _intermediateVideoDataRepository.Update(video);
-                        return video.ContentLink;
                     }
                 }
             }
