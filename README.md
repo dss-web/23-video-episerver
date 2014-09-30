@@ -1,5 +1,6 @@
-# 23 video plugin for EPiServer 7.5 or later
+# 23 Video plugin for EPiServer 7.5 or later
 
+![23 Video - addin a video](screenshot001.png)
 
 ## About
 
