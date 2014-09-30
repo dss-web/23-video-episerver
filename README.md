@@ -1,4 +1,4 @@
-# 23 Video plugin for EPiServer 7.5 or later
+# 23 Video plugin for EPiServer
 
 ![23 Video - addin a video](screenshot001.png)
 
@@ -8,8 +8,8 @@ TBA
 
 ## Installation
 
-
-TBA
+* Prerequisite: EPiServer 7.5 or later
+* TBA
 
 
 ## Copyright and License
