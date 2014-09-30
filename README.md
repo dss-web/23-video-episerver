@@ -1,6 +1,6 @@
-# 23 Video plugin for EPiServer
+# 23 Video add-in for EPiServer
 
-![23 Video - addin a video](screenshot001.png)
+![23 Video - adding a video](screenshot001.png)
 
 ## About
 
