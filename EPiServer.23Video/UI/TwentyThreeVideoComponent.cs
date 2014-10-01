@@ -3,9 +3,6 @@ using EPiServer.Shell.ViewComposition;
 
 namespace EPiCode.TwentyThreeVideo.UI
 {
-    /// <summary>
-    /// Component that provides a YouTube integration.
-    /// </summary>
     [Component]
     public class TwentyThreeVideoComponent : ComponentDefinitionBase
     {
