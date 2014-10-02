@@ -12,9 +12,9 @@ http://world.episerver.com/Blogs/Per-Magne-Skuseth/
 * Add a project reference to EPiCode.23Video from your EPiServer project.
 You'll need to add a few manual steps:
 
-1. Add the corresponding settings to web.config, fetched from your 23 Video account:
+1. Add the corresponding settings to web.config, [fetched from your 23 Video account](http://www.23video.com/api/oauth#setting-up-your-application):
 
-```
+```xml
     <add key="TwentyThreeVideoEnabled" value="true" /> 
     <add key="TwentyThreeVideoDomain" value="" /> 
     <add key="TwentyThreeVideoConsumerKey" value="" />
