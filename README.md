@@ -89,7 +89,7 @@ or
 
 ## Copyright and License
 
-The 23 Video content provider for EPiServer is copyright 2014 Norwegian Government Security and Service Organisation. 
+The 23 Video content provider for EPiServer is copyright 2014 the [Norwegian Government Security and Service Organisation](http://dss.dep.no/). 
 
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify
 it under the terms of the [GNU Lesser General Public License](lgpl-3.0.txt) as published by
