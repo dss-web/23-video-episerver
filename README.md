@@ -66,7 +66,7 @@ namespace EPiCode.TwentyThreeVideo.Controllers
 
 #####Standard view:
 
-```
+```c#
 @Model Models.Video
 @Html.Raw(Model.VideoUrl)
 or
@@ -75,7 +75,7 @@ or
 
 #####DisplayTemplate:
 
-```
+```c#
 @if (Model != null && Model != ContentReference.EmptyReference)
 {
     var oEmbedHtml = DataFactory.Instance.Get<Video>(@Model);
@@ -89,9 +89,20 @@ or
 
 ## Copyright and License
 
-The plugin is copyright 2014 Norwegian Government Security and Service Organisation. 
+The 23 Video content provider for EPiServer is copyright 2014 Norwegian Government Security and Service Organisation. 
 
-A license will be posted soon, in the meantime please [post an issue]( Issues 0) if you have any question.
+23 Video content provider for EPiServer is free software: you can redistribute it and/or modify
+it under the terms of the [GNU Lesser General Public License](lgpl-3.0.txt) as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+23 Video content provider for EPiServer is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with 23 Video content provider for EPiServer.  If not, see <http://www.gnu.org/licenses/>.
 
 ## DISCLAIMER
 
