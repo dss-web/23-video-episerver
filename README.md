@@ -1,10 +1,20 @@
-# 23 Video content provider for EPiServer
+# [23 Video](http://www.23video.com) content provider for EPiServer
 
 ![23 Video - adding a video](screenshot001.png)
 
 ## About
 
-http://world.episerver.com/Blogs/Per-Magne-Skuseth/
+### Key features:
+* Upload videos to Video 23 using standard drag and drop in the assets pane.
+* Edit video properties directly in EPiServer
+* Drag and drop videos to droppable areas
+* Permanent links
+* Search for videos using a search widget
+* Display videos using the direct URL or oEmbed format
+* Customizable views
+* Optimized for load balanced environments
+
+More (soon) at: http://world.episerver.com/Blogs/Per-Magne-Skuseth/
 
 ## Installation
 
