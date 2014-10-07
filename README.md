@@ -1,30 +1,20 @@
-# [23 Video](http://www.23video.com) content provider for EPiServer
+# 23 Video content provider for EPiServer
 
 ![23 Video - adding a video](screenshot001.png)
 
 ## About
 
-### Key features:
-* Upload videos to Video 23 using standard drag and drop in the assets pane.
-* Edit video properties directly in EPiServer
-* Drag and drop videos to droppable areas
-* Permanent links
-* Search for videos using a search widget
-* Display videos using the direct URL or oEmbed format
-* Customizable views
-* Optimized for load balanced environments
-
-More (soon) at: http://world.episerver.com/Blogs/Per-Magne-Skuseth/
+http://world.episerver.com/Blogs/Per-Magne-Skuseth/
 
 ## Installation
 
 * Prerequisite: EPiServer 7.5 or later
 * Add a project reference to EPiCode.23Video from your EPiServer project.
-You'll need to add a few manual steps:
 
-1. Add the corresponding settings to web.config, [fetched from your 23 Video account](http://www.23video.com/api/oauth#setting-up-your-application):
 
-```xml
+* Add the corresponding settings to web.config, fetched from your 23 Video account:
+
+```
     <add key="TwentyThreeVideoEnabled" value="true" /> 
     <add key="TwentyThreeVideoDomain" value="" /> 
     <add key="TwentyThreeVideoConsumerKey" value="" />
@@ -33,9 +23,9 @@ You'll need to add a few manual steps:
     <add key="TwentyThreeVideoAccessTokenSecret" value="" />
     <add key="TwentyThreeVideoEnableoEmbed" value="true" />
 ```
-2. Create a folder beneath your "modules" folder in your EPiServer sites called 'twentythreevideo'. Copy the content from EPiCode.23Video\ClientResources into this folder.
+* Create a folder beneath your "modules" folder in your EPiServer site named 'twentythreevideo'. Copy the content from EPiCode.23Video\ClientResources into this folder.
 
-3. Add controllers and views to display your videos! Examples are defined below:
+* Add controllers and views to display your videos. Examples are defined below:
 
 
 ###Controllers
@@ -76,7 +66,7 @@ namespace EPiCode.TwentyThreeVideo.Controllers
 
 #####Standard view:
 
-```c#
+```
 @Model Models.Video
 @Html.Raw(Model.VideoUrl)
 or
@@ -85,7 +75,7 @@ or
 
 #####DisplayTemplate:
 
-```c#
+```
 @if (Model != null && Model != ContentReference.EmptyReference)
 {
     var oEmbedHtml = DataFactory.Instance.Get<Video>(@Model);
@@ -95,24 +85,13 @@ or
         @Html.Raw(oEmbedHtml.oEmbedHtml)
     }
 }
-```
+``
 
 ## Copyright and License
 
-The 23 Video content provider for EPiServer is copyright 2014 the [Norwegian Government Security and Service Organisation](http://dss.dep.no/). 
+The plugin is copyright 2014 Norwegian Government Security and Service Organisation. 
 
-23 Video content provider for EPiServer is free software: you can redistribute it and/or modify
-it under the terms of the [GNU Lesser General Public License](lgpl-3.0.txt) as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-23 Video content provider for EPiServer is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with 23 Video content provider for EPiServer.  If not, see <http://www.gnu.org/licenses/>.
+A license will be posted soon, in the meantime please [post an issue]( Issues 0) if you have any question.
 
 ## DISCLAIMER
 

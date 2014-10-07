@@ -1,0 +1,124 @@
+<h1>23 Video content provider for EPiServer</h1>
+
+<p><img src="screenshot001.png" alt="23 Video - adding a video" /></p>
+
+<h2>About</h2>
+
+<p>http://world.episerver.com/Blogs/Per-Magne-Skuseth/</p>
+
+<h2>Installation</h2>
+
+<ul>
+<li>Prerequisite: EPiServer 7.5 or later</li>
+<li><p>Add a project reference to EPiCode.23Video from your EPiServer project.</p></li>
+<li><p>Add the corresponding settings to web.config, fetched from your 23 Video account:</p></li>
+</ul>
+
+<p><code>
+    &lt;add key="TwentyThreeVideoEnabled" value="true" /&gt; 
+    &lt;add key="TwentyThreeVideoDomain" value="" /&gt; 
+    &lt;add key="TwentyThreeVideoConsumerKey" value="" /&gt;
+    &lt;add key="TwentyThreeVideoConsumerSecret" value="" /&gt;
+    &lt;add key="TwentyThreeVideoAccessToken" value="" /&gt;
+    &lt;add key="TwentyThreeVideoAccessTokenSecret" value="" /&gt;
+    &lt;add key="TwentyThreeVideoEnableoEmbed" value="true" /&gt;
+</code>
+* Create a folder beneath your "modules" folder in your EPiServer site named 'twentythreevideo'. Copy the content from EPiCode.23Video\ClientResources into this folder.</p>
+
+<ul>
+<li>Add controllers and views to display your videos. Examples are defined below:</li>
+</ul>
+
+<h3>Controllers</h3>
+
+<p><code>c#
+using System.Web.Mvc;
+using EPiServer.Web;
+using EPiCode.TwentyThreeVideo.Models;
+namespace EPiCode.TwentyThreeVideo.Controllers
+{
+    public class TwentyThreeVideoController : Controller, IRenderTemplate&lt;Video&gt;
+    {
+        public ActionResult Index(Video currentContent)
+        {
+            return PartialView(currentContent);
+        }
+    }
+}
+</code></p>
+
+<p><code>c#
+using System.Web.Mvc;
+using EPiCode.TwentyThreeVideo.Models;
+using EPiServer.Web.Mvc;
+namespace EPiCode.TwentyThreeVideo.Controllers
+{
+    public class TwentyThreeVideoPartialContentController : PartialContentController&lt;Video&gt;
+    {
+        public override ActionResult Index(Video currentContent)
+        {
+            return PartialView(currentContent);
+        }
+    }
+}
+</code></p>
+
+<h3>Views</h3>
+
+<h5>Standard view:</h5>
+
+<p><code>
+@Model Models.Video
+@Html.Raw(Model.VideoUrl)
+or
+@Html.Raw(Model.oEmbedHtml)
+</code></p>
+
+<h5>DisplayTemplate:</h5>
+
+<p>```
+@if (Model != null &amp;&amp; Model != ContentReference.EmptyReference)
+{
+    var oEmbedHtml = DataFactory.Instance.Get<Video>(@Model);</p>
+
+<pre><code>if (oEmbedHtml != null)
+{
+    @Html.Raw(oEmbedHtml.oEmbedHtml)
+}
+</code></pre>
+
+<p>}
+``</p>
+
+<h2>Copyright and License</h2>
+
+<p>The plugin is copyright 2014 Norwegian Government Security and Service Organisation. </p>
+
+<p>A license will be posted soon, in the meantime please [post an issue]( Issues 0) if you have any question.</p>
+
+<h2>DISCLAIMER</h2>
+
+<p>THIS SOFTWARE  IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE NORWEGIAN GOVERNMENT SECURITY AND SERVICE ORGANISATION , OR ANY OF THEIR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+
+<p>Without limiting the foregoing, the Norwegian Government Security and Service Organisation make no warranty that:</p>
+
+<ul>
+<li>the software will meet your requirements.</li>
+<li>the software will be uninterrupted, timely, secure or error-free.</li>
+<li>the results that may be obtained from the use of the software will be effective, accurate or reliable.</li>
+<li>the quality of the software will meet your expectations.</li>
+<li>any errors in the software obtained from the OpenSHA.org web site will be corrected.</li>
+</ul>
+
+<p>Software and its documentation made available:</p>
+
+<ul>
+<li>could include technical or other mistakes, inaccuracies or typographical errors. The Norwegian Government Security and Service Organisation and its contributors may make changes to the software or documentation made available on its web site.</li>
+<li>may be out of date and the Norwegian Government Security and Service Organisation  and its contributors make no commitment to update such materials.</li>
+</ul>
+
+<p>The Norwegian Government Security and Service Organisation  and its contributors assume no responsibility for errors or ommissions in the software or documentation available.</p>
+
+<p>In no event shall the Norwegian Government Security and Service Organisation  and it's contributors be liable to you or any third parties for any special, punitive, incidental, indirect or consequential damages of any kind, or any damages whatsoever, including, without limitation, those resulting from loss of use, data or profits, whether or not the Norwegian Government Security and Service Organisation  and its contributors has been advised of the possibility of such damages, and on any theory of liability, arising out of or in connection with the use of this software.</p>
+
+<p>The use of the software is done at your own discretion and risk and with agreement that you will be solely responsible for any damage to your computer system or loss of data that results from such activities. No advice or information, whether oral or written, obtained by you from the Norwegian Government Security and Service Organisation , its its website or its contributors shall create any warranty for the software.</p>
