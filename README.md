@@ -1,4 +1,4 @@
-# [23 Video](http://www.23video.com) content provider for EPiServer
+# 23 Video content provider for EPiServer
 
 ![23 Video - adding a video](screenshot001.png)
 
@@ -14,7 +14,7 @@
 * Customizable views
 * Optimized for load balanced environments
 
-More (soon) at: http://world.episerver.com/Blogs/Per-Magne-Skuseth/Dates/2014/10/23-Video-content-provider/
+More at: http://world.episerver.com/Blogs/Per-Magne-Skuseth/Dates/2014/10/23-Video-content-provider/
 
 ## Installation
 
