@@ -1,4 +1,4 @@
-# [23 Video](http://www.23video.com) content provider for EPiServer
+# 23 Video content provider for EPiServer
 
 ![23 Video - adding a video](screenshot001.png)
 
