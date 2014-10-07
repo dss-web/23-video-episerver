@@ -203,7 +203,6 @@
     <Compile Include="Provider\Client.cs" />
     <Compile Include="Provider\Extensions.cs" />
     <Compile Include="Provider\TwentyThreeVideoRepository.cs" />
-    <Compile Include="Initialize\TwentyThreeVideoDependencyResolverInitialization.cs" />
     <Compile Include="Provider\Settings.cs" />
     <Compile Include="Provider\SettingsRepository.cs" />
     <Compile Include="Initialize\TwentyThreeVideoInitialization.cs" />
@@ -236,7 +235,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
