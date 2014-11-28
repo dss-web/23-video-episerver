@@ -45,17 +45,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         private static List<Photo> GetVideos(IApiProvider apiProvider, PhotoListParameters photoListParameters)
         {
-            const string cacheKey = "PhotoService";
-            //if (Caching.VideoProviderCache.Instance.InnerCache.ContainsKey(cacheKey))
-            //{
-            //    return Caching.VideoProviderCache.Instance.InnerCache.GetValue(cacheKey) as List<Photo>;
-            //}
-
             IPhotoService photoService = new PhotoService(apiProvider);
-
-            Visual.SiteService vc = new SiteService(apiProvider);
-            Visual.ISessionService ss = new SessionService(apiProvider);
-
             PhotoListParameters p = photoListParameters;
 
             if (photoListParameters == null)
@@ -65,9 +55,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             p.IncludeUnpublished = true;
             p.Video = true;
-
             List<Photo> photos = photoService.GetList(p);
-            //Caching.VideoProviderCache.Instance.InnerCache.Update(cacheKey, result, result.Count, TimeSpan.FromMinutes(10));
             return photos;
         }
 
@@ -86,7 +74,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             string fileExtention = Path.GetExtension(filename);
             if (fileExtention == null)
             {
-                //default extention if missing
+                // default extention if missing
                 fileExtention = ".mp4";//aosrei
             }
             try
@@ -99,7 +87,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
             catch (Exception ex)
             {
-                _log.Error("Error uploading video to 23 Video:" + ex);
+                _log.Error("Error uploading video to 23 Video:", ex);
                 throw ex;
             }
         }
@@ -111,26 +99,20 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             // Get a list of videos to throw in there
             List<Album> albums = GetChannels(apiProvider);
-
             return albums;
-
         }
 
         private static List<Album> GetChannels(IApiProvider apiProvider)
         {
             IAlbumService albumService = new AlbumService(apiProvider);
-
             return albumService.GetList();
         }
 
         public static string GetoEmbedCodeForVideo(string videoName)
         {
             string jsonResponse = string.Empty;
-
             string endpoint = string.Format("http://{0}/oembed?format=json&url=http://{0}{1}", Client.Settings.Domain, videoName);
-
             var webClient = new WebClient();
-
             try
             {
                 jsonResponse = webClient.DownloadString(endpoint);
@@ -144,9 +126,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
             catch (Exception exception)
             {
-                _log.ErrorFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
+                _log.WarnFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
             }
-
             return string.Empty;
         }
     }

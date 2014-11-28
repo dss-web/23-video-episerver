@@ -37,9 +37,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             foreach (var softLink in links)
             {
                 Video videoContent;
-                if (
-                    repository
-                        .TryGet<Video>(softLink.ReferencedContentLink, out videoContent))
+                if (repository.TryGet(softLink.ReferencedContentLink, out videoContent))
                 {
                     yield return videoContent.Id;
                 }

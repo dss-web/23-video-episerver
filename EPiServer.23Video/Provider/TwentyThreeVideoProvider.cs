@@ -45,14 +45,9 @@ namespace EPiCode.TwentyThreeVideo.Provider
             {
                 item = _items.FirstOrDefault(p => p.ContentLink.CompareToIgnoreWorkID(contentLink));
             }
-            // LoadContent will be called after a autosave or after publish on the item since EPiServer will try to update properties in this method;
-            // EPiServer.Cms.Shell.UI.Rest.ContentChangeManager.UpdateContentProperties(ContentReference contentReference, IDictionary`2 properties, SaveAction saveAction). 
-            // The UpdateContentProperties requires a writable icontent object. So in the Save method we set work id to 1 to tell EPiServer that we have a new version and that the publish-button is enabled.
             if (contentLink.WorkID > 0)
             {
                 var video = item as Video;
-
-                // Only for vidoes, not videofolder
                 if (video != null)
                 {
                     Video writeableVideo = video.CreateWritableClone() as Video;
@@ -60,7 +55,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     return writeableVideo;
                 }
             }
-
             return item;
         }
 
@@ -128,10 +122,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     newVersion.ContentLink = new ContentReference(int.Parse(newVersion.Id), 0, ProviderKey);
                     _intermediateVideoDataRepository.Update(newVersion);
                     VideoSynchronizationEventHandler.DataStoreUpdated();
-
-                    // In LoadContent we check for the work id of IContent if changes has been done (work id > 0). If the id > 0
-                    // then we set the status to CheckedOut which will trigger the publish-button to be active. When we do the publish, 
-                    // we have to tell LoadContent that the work id == 0 so the publish-button will be inactive.
                     return newVersion.ContentLink;
                 }
 
@@ -186,7 +176,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public void RefreshItems(List<BasicContent> items)
         {
             _items = items;
-            this.ClearProviderPagesFromCache();
+            ClearProviderPagesFromCache();
         }
 
         protected ContentResolveResult ResolveContent(BasicContent video)
