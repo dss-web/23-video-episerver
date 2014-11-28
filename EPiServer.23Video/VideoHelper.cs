@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
+using EPiServer.Cms.Shell.UI.Controllers.Preview;
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
@@ -46,7 +47,8 @@ namespace EPiCode.TwentyThreeVideo
                 video.BinaryData = GetThumbnail(item);
                 video.Thumbnail = ThumbnailManager.Service.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
                 video.oEmbedVideoName = item.One;
-                if (SettingsRepository.Service.oEmbedIsEnabled)
+                video.PublishedIn23 = item.Published ?? false;
+                if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
                 {
                     video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
                 }

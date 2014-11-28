@@ -38,6 +38,9 @@ namespace EPiCode.TwentyThreeVideo.Models
             get { return base.Status; }
             set { base.Status = value;  }
         }
+
+        [Ignore]
+        public virtual bool PublishedIn23 { get; set; }
         
     }
 }
