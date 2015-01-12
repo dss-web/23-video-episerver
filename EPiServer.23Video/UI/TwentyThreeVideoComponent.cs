@@ -14,7 +14,7 @@ namespace EPiCode.TwentyThreeVideo.UI
             : base("twentythree.components.TwentyThreeVideo")
         {
             Categories = new string[] { "content" };
-            Title = "23 video";
+            Title = "Video";
             Description = "List content from 23 Video";
             SortOrder = 1000;
             PlugInAreas = new[] { PlugInArea.AssetsDefaultGroup };
