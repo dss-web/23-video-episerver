@@ -760,7 +760,8 @@ function (
             this._dialog = new Dialog({
                 title: resources.linktocreateitem,
                 content: uploader,
-                autofocus: UploadUtil.supportNativeDndFiles(), // Only autofocus if not using flash.
+                autofocus: !!window.FileReader,
+                //autofocus: UploadUtil.supportNativeDndFiles(), // Only autofocus if not using flash.
                 defaultActionsVisible: false,
                 closeIconVisible: false
             });
