@@ -203,6 +203,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                     video.VideoUrl = dataModel.VideoUrl;
                     video.Thumbnail = dataModel.Thumbnail;
                     video.BinaryData = dataModel.Binarydata;
+                    video.ContentGuid = dataModel.Guid;
                     helper.PopulateStandardVideoProperties(video);
                     yield return video;
                 }
