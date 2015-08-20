@@ -35,7 +35,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         public override ContentProviderCapabilities ProviderCapabilities
         {
-            get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit; }
+            get { return ContentProviderCapabilities.Create | ContentProviderCapabilities.Edit | ContentProviderCapabilities.Security; }
         }
 
         protected override IContent LoadContent(ContentReference contentLink, ILanguageSelector languageSelector)
