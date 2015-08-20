@@ -2,14 +2,12 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
+
 using System;
 using System.Diagnostics;
-using System.Security.Principal;
-using System.Web;
 using EPiServer.BaseLibrary.Scheduling;
 using EPiServer.DataAbstraction;
 using EPiServer.PlugIn;
-using EPiServer.Security;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
@@ -39,14 +37,13 @@ namespace EPiCode.TwentyThreeVideo.Data
         {
             var sw = new Stopwatch();
             sw.Start();
-            OnStatusChanged(String.Format("Starting execution of 23 video synchronization"));
+            OnStatusChanged("Starting execution of 23 video synchronization");
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            var videoContent = intermediateVideoDataRepository.LoadFromService();//intermediateVideoDataRepository.LoadFromService();
+            var videoContent = intermediateVideoDataRepository.LoadFromService();
             OnStatusChanged(String.Format("{0} videos and channels found. Now storing to DDS",videoContent.Count));
             intermediateVideoDataRepository.Save(videoContent);
             VideoSynchronizationEventHandler.DataStoreUpdated();
 
-           // VideoSynchronizationEventHandler.DataStoreUpdated();
             if (_stopSignaled)
             {
                 return "Stop of job was called";
@@ -54,7 +51,5 @@ namespace EPiCode.TwentyThreeVideo.Data
             sw.Stop();
             return "Done. Time taken " + sw.Elapsed.ToString("g");
         }
-    }
-
-    
+    }    
 }

@@ -188,6 +188,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\TwentyThreeVideoController.cs" />
+    <Compile Include="Data\EditorGroupChannelMappingRepository.cs" />
     <Compile Include="Initialize\TwentyThreeRequestCreator.cs" />
     <Compile Include="Data\IntermediateVideoDataModel.cs" />
     <Compile Include="Data\IntermediateVideoDataRepository.cs" />

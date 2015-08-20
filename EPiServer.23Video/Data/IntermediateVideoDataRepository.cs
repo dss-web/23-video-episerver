@@ -155,15 +155,17 @@ namespace EPiCode.TwentyThreeVideo.Data
                     model.VideoContentType = VideoContentType.Video;
                     yield return model;
                 }
-                else
+                else if(basicContent is VideoFolder)
                 {
+                    var videoFolder = basicContent as VideoFolder;
+                    model.EditorGroup = videoFolder.EditorGroup;
                     model.VideoContentType = VideoContentType.VideoFolder;
                     yield return model;
                 }
             }
         }
 
-        public IEnumerable<BasicContent> ConvertToBasicContent(IEnumerable<IntermediateVideoDataModel> dataModels)
+        private IEnumerable<BasicContent> ConvertToBasicContent(IEnumerable<IntermediateVideoDataModel> dataModels)
         {
             var helper = new VideoHelper();
             var entryPoint = ContentRepositry.Service.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
@@ -182,6 +184,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                                   SetPropertyValues = true
                               }) as VideoFolder;
                     folder.Name = dataModel.Name;
+                    folder.EditorGroup = dataModel.EditorGroup;
                     folder.ContentLink = dataModel.ContentLink;
                     folder.ContentGuid = dataModel.Guid;
                     folders.Add(folder);
@@ -222,12 +225,17 @@ namespace EPiCode.TwentyThreeVideo.Data
                     LanguageSelector = LanguageSelector.AutoDetect(),
                     SetPropertyValues = true
                 }) as VideoFolder;
-                if (folder == null) continue;
+                if (folder == null) continue;                
                 if (album.AlbumId != null)
                 {
                     var id = (int)album.AlbumId;
                     folder.ContentLink = new ContentReference(id, Constants.ProviderKey);
                     folder.Name = album.Title;
+
+                    var editorGroup = new EditorGroupChannelMappingRepository().GetEditorGroupForChannel(folder.Name);
+                    if(!string.IsNullOrWhiteSpace(editorGroup))
+                        folder.EditorGroup = editorGroup;
+                    
                     _log.InfoFormat("23Video: Channel {0} created.", album.Title);
                     yield return folder;
                 }

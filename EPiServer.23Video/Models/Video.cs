@@ -19,8 +19,10 @@ namespace EPiCode.TwentyThreeVideo.Models
 
         [ScaffoldColumn(false)]
         public Blob BinaryData { get; set; }
+        
         [ScaffoldColumn(false)]
         public Uri BinaryDataContainer { get; set; }
+        
         [Ignore]
         public string VideoUrl { get; set; }
 

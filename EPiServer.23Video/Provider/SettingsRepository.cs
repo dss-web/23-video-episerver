@@ -3,6 +3,7 @@
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using EPiServer.ServiceLocation;
 using log4net;
@@ -12,22 +13,46 @@ namespace EPiCode.TwentyThreeVideo.Provider
     [ServiceConfiguration(ServiceType = typeof(SettingsRepository))]
     public class SettingsRepository
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public Settings LoadSettings()
         {
-            Settings currentSettings = new Settings();
-
-            currentSettings.Enabled = Enabled;
-            currentSettings.Domain = Domain;
-            currentSettings.ConsumerKey = ConsumerKey;
-            currentSettings.ConsumerSecret = ConsumerSecret;
-            currentSettings.AccessToken = AccessToken;
-            currentSettings.AccessTokenSecret = AccessTokenSecret;
-            currentSettings.OEmbedIsEnabled = oEmbedIsEnabled;
-
+            Settings currentSettings = new Settings
+            {
+                Enabled = Enabled,
+                Domain = Domain,
+                ConsumerKey = ConsumerKey,
+                ConsumerSecret = ConsumerSecret,
+                AccessToken = AccessToken,
+                AccessTokenSecret = AccessTokenSecret,
+                OEmbedIsEnabled = oEmbedIsEnabled,
+                EditorGroupChannelMapping = EditorGroupChannelMapping
+            };
 
             return currentSettings;
+        }
+
+        public IDictionary<string, string> EditorGroupChannelMapping
+        {
+            get
+            { 
+                var mapping = new Dictionary<string, string>();
+
+                var setting = GetAppSetting("TwentythreeVideoEditorMapping");
+
+                if (!string.IsNullOrWhiteSpace(setting))
+                {
+                   
+                    foreach (var s in setting.Split('|'))
+                    {
+                        var t = s.Split(';');
+                        if (!mapping.ContainsKey(t[0]))
+                            mapping.Add(t[0], t[1]);
+                    }                    
+                }
+
+                return mapping;
+            }
         }
 
         private  string GetAppSetting(string identifier)
@@ -37,14 +62,14 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 string result = ConfigurationManager.AppSettings.Get(identifier);
                 if (String.IsNullOrEmpty(result))
                 {
-                    _log.Error("TwentyTreeVideo value '" + identifier + "' not set in config.");
+                    Log.Error("TwentyTreeVideo value '" + identifier + "' not set in config.");
                 }
 
                 return result;
             }
             catch(Exception ex)
             {
-                _log.Error("TwentyTreeVideo value ´" + identifier + "´ not set in config", ex);
+                Log.Error("TwentyTreeVideo value ´" + identifier + "´ not set in config", ex);
             }
             return null;
         }
@@ -52,37 +77,31 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public string Enabled
         {
             get { return GetAppSetting("TwentythreeVideoEnabled"); }
-            private set { }
         }
 
         public string Domain
         {
             get { return GetAppSetting("TwentythreeVideoDomain"); }
-            private set { }
         }
 
         public  string ConsumerKey
         {
             get { return GetAppSetting("TwentythreeVideoConsumerKey"); }
-            private set { }
         }
 
         public  string ConsumerSecret
         {
             get { return GetAppSetting("TwentythreeVideoConsumerSecret"); }
-            private set { }
         }
 
         public  string AccessToken
         {
             get { return GetAppSetting("TwentythreeVideoAccessToken"); }
-            private set { }
         }
 
         public  string AccessTokenSecret
         {
             get { return GetAppSetting("TwentythreeVideoAccessTokenSecret"); }
-            private set { }
         }
 
         public bool oEmbedIsEnabled
@@ -98,7 +117,6 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
                 return false;
             }
-            private set { }
         }
     }
 }
