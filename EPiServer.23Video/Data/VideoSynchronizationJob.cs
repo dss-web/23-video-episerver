@@ -5,14 +5,14 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 using System;
 using System.Diagnostics;
-using EPiServer.BaseLibrary.Scheduling;
 using EPiServer.DataAbstraction;
 using EPiServer.PlugIn;
+using EPiServer.Scheduler;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
     [ScheduledPlugIn(DisplayName = "23 Video integration job", DefaultEnabled = true, IntervalType = ScheduledIntervalType.Minutes, IntervalLength = 30)]
-    public class VideoSynchronizationJob : JobBase
+    public class VideoSynchronizationJob : ScheduledJobBase
     {
         private bool _stopSignaled;
 

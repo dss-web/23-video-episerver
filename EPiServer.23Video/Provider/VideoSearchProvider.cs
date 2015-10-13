@@ -12,14 +12,15 @@ using EPiServer.DataAbstraction;
 using EPiServer.Framework.Localization;
 using EPiServer.Shell.Search;
 using EPiServer.Web;
+using EPiServer.Web.Routing;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     [SearchProvider]
     public class VideoSearchProvider : ContentSearchProviderBase<BasicContent, ContentType>
     {
-        public VideoSearchProvider(LocalizationService localizationService, SiteDefinitionResolver siteDefinitionResolver, IContentTypeRepository contentTypeRepository)
-            : base(localizationService, siteDefinitionResolver, contentTypeRepository)
+        public VideoSearchProvider(LocalizationService localizationService, SiteDefinitionResolver siteDefinitionResolver, IContentTypeRepository contentTypeRepository,  EditUrlResolver editUrlResolver)
+            : base(localizationService, siteDefinitionResolver, contentTypeRepository,editUrlResolver)
         {
         }
 
