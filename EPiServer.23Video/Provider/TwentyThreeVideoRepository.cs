@@ -45,18 +45,29 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
         private static List<Photo> GetVideos(IApiProvider apiProvider, PhotoListParameters photoListParameters)
         {
-            IPhotoService photoService = new PhotoService(apiProvider);
-            PhotoListParameters p = photoListParameters;
+            var photoService = new PhotoService(apiProvider);
+            var p = photoListParameters;
 
             if (photoListParameters == null)
             {
                 p = new PhotoListParameters();
             }
 
-            p.IncludeUnpublished = true;
+            p.IncludeUnpublished = false;
+            p.PageOffset = 1;
+            p.Size = 20;
             p.Video = true;
-            List<Photo> photos = photoService.GetList(p);
-            return photos;
+
+            var allPhotos = new List<Photo>();
+            var completed = false;            
+            while (!completed)
+            {
+                var photos = photoService.GetList(p);                                
+                allPhotos.AddRange(photos);
+                completed = photos.Count < p.Size;
+                p.PageOffset++;
+            }
+            return allPhotos;
         }
 
         public static void UpdateVideo(Photo photo)

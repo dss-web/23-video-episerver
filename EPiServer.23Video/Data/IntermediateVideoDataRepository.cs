@@ -98,8 +98,9 @@ namespace EPiCode.TwentyThreeVideo.Data
             var videoFolders = CreateFoldersFromChannels(entryPoint).ToList();
             var videoContentList = videoFolders.ToList();
             var videoHelper = new VideoHelper();
+            
             Parallel.ForEach(videoFolders, folder =>
-            {
+            {                            
                 if (folder is VideoFolder)
                 {
                     var videos = TwentyThreeVideoRepository.GetVideoList(folder.ContentLink.ID);
@@ -128,7 +129,9 @@ namespace EPiCode.TwentyThreeVideo.Data
                         }
                     }
                 }
-            });
+           
+            }
+            );
             return videoContentList;
         }
 
