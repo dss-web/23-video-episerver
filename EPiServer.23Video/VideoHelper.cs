@@ -14,12 +14,14 @@ using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.ServiceLocation;
+using log4net;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo
 {
     public class VideoHelper
     {
+        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         protected Injected<ThumbnailManager> ThumbnailManager { get; set; }
         protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
@@ -38,21 +40,30 @@ namespace EPiCode.TwentyThreeVideo
         {
             if (item.PhotoId != null)
             {
-                int id = (int)(item.PhotoId);
-                video.VideoUrl = EmbedCode(item.PhotoId.ToString(), item.Token, item.VideoHD.Width ?? item.VideoMedium.Width ?? item.VideoSmall.Width, item.VideoHD.Height ?? item.VideoMedium.Height ?? item.VideoSmall.Height);
-                video.ContentLink = new ContentReference((id).GetHashCode(), 0, Constants.ProviderKey);
-                video.Id = id.ToString();
-                video.ContentGuid = StringToGuid(id.ToString());
-                video.Name = item.Title;
-                video.BinaryData = GetThumbnail(item);
-                video.Thumbnail = ThumbnailManager.Service.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
-                video.oEmbedVideoName = item.One;
-                video.PublishedIn23 = item.Published ?? false;
-                if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
+                try
                 {
-                    video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                    int id = (int)(item.PhotoId);
+                    video.VideoUrl = EmbedCode(item.PhotoId.ToString(), item.Token, item.VideoHD.Width ?? item.VideoMedium.Width ?? item.VideoSmall.Width, item.VideoHD.Height ?? item.VideoMedium.Height ?? item.VideoSmall.Height);
+                    video.ContentLink = new ContentReference((id).GetHashCode(), 0, Constants.ProviderKey);
+                    video.Id = id.ToString();
+                    video.ContentGuid = StringToGuid(id.ToString());
+                    video.Name = item.Title;
+                    video.BinaryData = GetThumbnail(item);
+                    video.Thumbnail = ThumbnailManager.Service.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
+                    video.oEmbedVideoName = item.One;
+                    video.PublishedIn23 = item.Published ?? false;
+                    if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
+                    {
+                        video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                    }
+                    PopulateStandardVideoProperties(video);
                 }
-                PopulateStandardVideoProperties(video);
+                catch (Exception e)
+                {
+                    _log.ErrorFormat("VideoHelper: PopulateVideo failed: VideoID: {0}, PhotoID: {1}, Exception: {2}", video != null && video.Id != null ? video.Id : "null", item != null && item.PhotoId != null ? item.PhotoId : 0, e.Message);
+                    throw;
+                }
+               
             }
             return video;
         }
