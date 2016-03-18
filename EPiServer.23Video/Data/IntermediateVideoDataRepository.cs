@@ -38,14 +38,25 @@ namespace EPiCode.TwentyThreeVideo.Data
 
         public void Save(IEnumerable<BasicContent> contents)
         {
-            var simpleContent = ConvertFromBasicContent(contents);
-            string serializedContents = JsonConvert.SerializeObject(simpleContent);
-            var store = VideoContentDataModelStore;
-            store.Save(new VideoContentDataModel()
+            string serializedContents = string.Empty;
+            try
             {
-                SerializedContent = serializedContents,
-                LastUpdated = DateTime.Now
-            });
+                var simpleContent = ConvertFromBasicContent(contents);
+                serializedContents = JsonConvert.SerializeObject(simpleContent);
+                var store = VideoContentDataModelStore;
+                store.Save(new VideoContentDataModel()
+                {
+                    SerializedContent = serializedContents,
+                    LastUpdated = DateTime.Now
+                });
+            }
+            catch (Exception e)
+            {
+                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0} \n serializedContents = {1}", e.Message, serializedContents);
+                
+                throw;
+            }
+           
         }
 
         public List<BasicContent> Load()
