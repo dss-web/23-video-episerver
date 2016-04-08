@@ -5,6 +5,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
@@ -52,9 +53,23 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0} \n serializedContents = {1}", e.Message, serializedContents);
+                StringBuilder sb = new StringBuilder();
+                if (contents != null)
+                {
+                    foreach (var basicContent in contents)
+                    {
+                        if (basicContent != null)
+                        {
+                            sb.Append("Name: ");
+                            sb.Append(basicContent.Name);
+                            sb.Append(". \n");
+                        }
+                    }
+                }
                 
-                throw;
+                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0} \n serializedContents = {1}", e.Message, sb);
+                
+                throw new Exception("Serialization of videos failed. Content from 23video may be corrupt. No changes was made to videos in Episerver.");
             }
            
         }
@@ -104,46 +119,54 @@ namespace EPiCode.TwentyThreeVideo.Data
 
         public List<BasicContent> LoadFromService()
         {
+            try
+            {
+                var entryPoint = ContentRepositry.Service.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
+                var videoFolders = CreateFoldersFromChannels(entryPoint).ToList();
+                var videoContentList = videoFolders.ToList();
+                var videoHelper = new VideoHelper();
 
-            var entryPoint = ContentRepositry.Service.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
-            var videoFolders = CreateFoldersFromChannels(entryPoint).ToList();
-            var videoContentList = videoFolders.ToList();
-            var videoHelper = new VideoHelper();
-            
-            Parallel.ForEach(videoFolders, folder =>
-            {                            
-                if (folder is VideoFolder)
+                Parallel.ForEach(videoFolders, folder =>
                 {
-                    var videos = TwentyThreeVideoRepository.GetVideoList(folder.ContentLink.ID);
-                    foreach (var videoData in videos)
+                    if (folder is VideoFolder)
                     {
-                        var type = ContentTypeRepository.Service.Load<Video>();
-                        var video =
-                            ContentFactory.Service.CreateContent(type, new BuildingContext(type)
+                        var videos = TwentyThreeVideoRepository.GetVideoList(folder.ContentLink.ID);
+                        foreach (var videoData in videos)
+                        {
+                            var type = ContentTypeRepository.Service.Load<Video>();
+                            var video =
+                                ContentFactory.Service.CreateContent(type, new BuildingContext(type)
+                                {
+                                    Parent = folder,
+                                    LanguageSelector = LanguageSelector.AutoDetect(),
+                                    SetPropertyValues = true
+                                }) as Video;
+                            if (video != null)
                             {
-                                Parent = folder,
-                                LanguageSelector = LanguageSelector.AutoDetect(),
-                                SetPropertyValues = true
-                            }) as Video;
-                        if (video != null)
-                        {
-                            _log.DebugFormat("23Video: Added video with name {0}", video.Name);
-                            videoHelper.PopulateVideo(video, videoData);
+                                _log.DebugFormat("23Video: Added video with name {0}", video.Name);
+                                videoHelper.PopulateVideo(video, videoData);
 
-                            videoContentList.Add(video);
-                        }
-                        else
-                        {
-                            _log.InfoFormat(
-                                "23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}",
-                                videoData.One);
+                                videoContentList.Add(video);
+                            }
+                            else
+                            {
+                                _log.InfoFormat(
+                                    "23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}",
+                                    videoData.One);
+                            }
                         }
                     }
                 }
-           
+                );
+                return videoContentList;
             }
-            );
-            return videoContentList;
+            catch (Exception e)
+            {
+                _log.ErrorFormat("23Video: LoadFromService: Could not load videos from service. Exception {0}", e.Message);
+
+                throw new Exception("Could not load videos from service. No changes was made to videos in Episerver");
+            }
+            
         }
 
         public IEnumerable<IntermediateVideoDataModel> ConvertFromBasicContent(IEnumerable<BasicContent> contents)
