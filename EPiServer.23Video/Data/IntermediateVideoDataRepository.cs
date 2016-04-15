@@ -53,21 +53,8 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
             catch (Exception e)
             {
-                StringBuilder sb = new StringBuilder();
-                if (contents != null)
-                {
-                    foreach (var basicContent in contents)
-                    {
-                        if (basicContent != null)
-                        {
-                            sb.Append("Name: ");
-                            sb.Append(basicContent.Name);
-                            sb.Append(". \n");
-                        }
-                    }
-                }
                 
-                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0} \n serializedContents = {1}", e.Message, sb);
+                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0}", e.Message);
                 
                 throw new Exception("Serialization of videos failed. Content from 23video may be corrupt. No changes was made to videos in Episerver.");
             }
