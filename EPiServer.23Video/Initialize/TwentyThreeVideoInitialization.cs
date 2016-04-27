@@ -25,6 +25,7 @@ using log4net;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
     [ModuleDependency(typeof(DataInitialization))]
     public class TwentyThreeVideoInitialization : IInitializableModule
     {
