@@ -11,6 +11,7 @@ using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer.Cms.Shell.UI.Controllers.Preview;
 using EPiServer.Core;
+using EPiServer.Core.Internal;
 using EPiServer.DataAnnotations;
 using EPiServer.Framework.Blobs;
 using EPiServer.ServiceLocation;
@@ -89,7 +90,7 @@ namespace EPiCode.TwentyThreeVideo
             var url = "http://" + Client.Settings.Domain + item.Original.Download;
             var imageData = webClient.DownloadData(url);
             string container = item.PhotoId.ToString();
-            var blob = BlobFactory.Instance.GetBlob(new Uri(string.Format("{0}://{1}/{2}/{3}", Blob.BlobUriScheme, Blob.DefaultProvider, container, "original.jpg")));
+            var blob = ServiceLocator.Current.GetInstance<IBlobFactory>().GetBlob(new Uri(string.Format("{0}://{1}/{2}/{3}", Blob.BlobUriScheme, Blob.DefaultProvider, container, "original.jpg")));
             using (var stream = new MemoryStream(imageData))
             {
                 blob.Write(stream);

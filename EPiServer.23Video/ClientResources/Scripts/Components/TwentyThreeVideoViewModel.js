@@ -31,7 +31,7 @@ define([
     "epi-cms/widget/UploadUtil",
         "epi/shell/widget/dialog/Dialog",
 //command
-    "epi-cms/widget/command/NewFolder",
+    "epi-cms/asset/command/NewFolder",
     "epi-cms/command/RenameFolder",
     "epi-cms/widget/CreateCommandsMixin",
     "epi-cms/command/NewContent",

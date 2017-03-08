@@ -11,6 +11,7 @@ using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
+using EPiServer.ServiceLocation;
 using EPiServer.Web;
 using log4net;
 using Visual.Domain;
@@ -165,7 +166,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     }
                     finally
                     {
-                        BlobFactory.Instance.Delete((content as MediaData).BinaryData.ID);
+                        ServiceLocator.Current.GetInstance<IBlobFactory>().Delete((content as MediaData).BinaryData.ID);
                     }
                 }
             }

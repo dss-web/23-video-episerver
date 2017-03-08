@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiServer;
 using EPiServer.Core;
+using EPiServer.Core.Internal;
 using EPiServer.ServiceLocation;
 
 namespace EPiCode.TwentyThreeVideo.Provider

@@ -9,6 +9,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>EPiServer 23Video integration</description>
     <copyright>Copyright 2014</copyright>
+    <dependencies>
+      <dependency id="EPiServer.CMS.UI.Core" version="[10.1.0, 11.0)" />
+      <dependency id="EPiServer.CMS.Core" version="[10.1.0, 11.0)" />
+      <dependency id="EPiServer.Framework" version="[10.1.0, 11.0)" />
+    </dependencies>
   </metadata>
   <files>
     <file src="bin\Release\EPiCode.23Video.dll" target="lib\net40\EPiCode.23Video.dll" />

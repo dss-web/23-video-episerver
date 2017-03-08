@@ -11,7 +11,7 @@ namespace EPiCode.TwentyThreeVideo.UI
     public class TwentyThreeVideoComponent : ComponentDefinitionBase
     {
         public TwentyThreeVideoComponent()
-            : base("twentythree.components.TwentyThreeVideo")
+            : base("twentythree/components/TwentyThreeVideo")
         {
             Categories = new string[] { "content" };
             Title = "Video";

@@ -21,6 +21,7 @@ using EPiServer.Framework.Initialization;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
 using EPiCode.TwentyThreeVideo.Models;
+using EPiServer.DataAbstraction.RuntimeModel.Internal;
 using log4net;
 
 namespace EPiCode.TwentyThreeVideo.Initialize
@@ -51,12 +52,6 @@ namespace EPiCode.TwentyThreeVideo.Initialize
             var domain = SettingsRepository.Service.Domain;
             WebRequest.RegisterPrefix("https://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
             WebRequest.RegisterPrefix("http://" + domain, TwentyThreeRequestCreator.TwentyThreeHttp);
-
-            // Register 23Video IContentData type
-            var registerFolder = context.Locate.Advanced.GetInstance<SingleModelRegister<VideoFolder>>();
-            registerFolder.RegisterType();
-            var registerVideo = context.Locate.Advanced.GetInstance<SingleModelRegister<Video>>();
-            registerVideo.RegisterType();
 
             var contentRepository = context.Locate.ContentRepository();
             var entryPoint = contentRepository.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
