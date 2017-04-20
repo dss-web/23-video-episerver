@@ -84,7 +84,7 @@ namespace EPiCode.TwentyThreeVideo
             if (photoblock == null || photoblock.Download.IsNullOrEmpty())
                 return string.Empty;
             var domain = Client.Settings.Domain;
-            var url = string.Format("http://{0}/{1}", domain, photoblock.Download);
+            var url = string.Format("http://{0}{1}", domain, photoblock.Download);
             return url;
         }
         private static Guid StringToGuid(string value)
