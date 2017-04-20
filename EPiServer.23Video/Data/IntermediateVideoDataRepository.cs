@@ -176,6 +176,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                     model.oEmbedHtml = video.oEmbedHtml;
                     model.oEmbedVideoName = video.oEmbedVideoName;
                     model.VideoUrl = video.VideoUrl;
+                    model.VideoDownloadUrl = video.VideoDownloadUrl;
                     model.Id = video.Id;
                     model.VideoContentType = VideoContentType.Video;
                     yield return model;
@@ -229,6 +230,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                     video.oEmbedHtml = dataModel.oEmbedHtml;
                     video.oEmbedVideoName = dataModel.oEmbedVideoName;
                     video.VideoUrl = dataModel.VideoUrl;
+                    video.VideoDownloadUrl = dataModel.VideoDownloadUrl;
                     video.Thumbnail = dataModel.Thumbnail;
                     video.BinaryData = dataModel.Binarydata;
                     video.ContentGuid = dataModel.Guid;

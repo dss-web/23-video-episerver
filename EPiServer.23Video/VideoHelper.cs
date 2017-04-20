@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Castle.Core.Internal;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer.Cms.Shell.UI.Controllers.Preview;
@@ -52,6 +53,7 @@ namespace EPiCode.TwentyThreeVideo
                     video.BinaryData = GetThumbnail(item);
                     video.Thumbnail = ThumbnailManager.Service.CreateImageBlob(video.BinaryData, "thumbnail", new ImageDescriptorAttribute(48, 48));
                     video.oEmbedVideoName = item.One;
+                    video.VideoDownloadUrl = GetVideoDownloadUrl(item.VideoHD);
                     video.PublishedIn23 = item.Published ?? false;
                     if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
                     {
@@ -77,6 +79,14 @@ namespace EPiCode.TwentyThreeVideo
             return "<iframe src=\"http://" + domain + "/v.ihtml?token=" + photoToken + "&photo%5fid=" + photoId + "\" width=\"" + widthString + "\" height=\"" + heightString + "\" frameborder=\"0\" border=\"0\" scrolling=\"no\"></iframe>";
         }
 
+        private string GetVideoDownloadUrl(PhotoBlock photoblock)
+        {
+            if (photoblock == null || photoblock.Download.IsNullOrEmpty())
+                return string.Empty;
+            var domain = Client.Settings.Domain;
+            var url = string.Format("http://{0}/{1}", domain, photoblock.Download);
+            return url;
+        }
         private static Guid StringToGuid(string value)
         {
             MD5 md5Hasher = MD5.Create();

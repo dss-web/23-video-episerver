@@ -36,6 +36,9 @@ namespace EPiCode.TwentyThreeVideo.Models
         [Ignore]
         public virtual string oEmbedHtml { get; set; }
 
+        [Ignore]
+        public virtual string VideoDownloadUrl { get; set; }
+
         public new VersionStatus Status {
             get { return base.Status; }
             set { base.Status = value;  }

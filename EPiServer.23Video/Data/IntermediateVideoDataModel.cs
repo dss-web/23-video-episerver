@@ -21,6 +21,7 @@ namespace EPiCode.TwentyThreeVideo.Data
         public string VideoUrl { get; set; }
         public string oEmbedHtml { get; set; }
         public string oEmbedVideoName { get; set; }
+        public string VideoDownloadUrl { get; set; }
         public string EditorGroup { get; set; }
     }
 }
