@@ -8,6 +8,8 @@ using System.Diagnostics;
 using EPiServer.DataAbstraction;
 using EPiServer.PlugIn;
 using EPiServer.Scheduler;
+using System.Collections.Generic;
+using EPiServer.Core;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
@@ -39,8 +41,13 @@ namespace EPiCode.TwentyThreeVideo.Data
             sw.Start();
             OnStatusChanged("Starting execution of 23 video synchronization");
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            var videoContent = intermediateVideoDataRepository.LoadFromService();
-            OnStatusChanged(String.Format("{0} videos and channels found. Now storing to DDS",videoContent.Count));
+            var firstTry = intermediateVideoDataRepository.TryLoadFromService(out List<BasicContent> videoContent);
+            if (!firstTry)
+            {
+                OnStatusChanged("Loading videos from 23 video failed. Retrying.");
+                videoContent = intermediateVideoDataRepository.LoadFromService();
+            }
+            OnStatusChanged(String.Format("{0} videos and channels found. Now storing to DDS", videoContent.Count));
             intermediateVideoDataRepository.Save(videoContent);
             VideoSynchronizationEventHandler.DataStoreUpdated();
 
@@ -49,7 +56,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                 return "Stop of job was called";
             }
             sw.Stop();
-            return "Done. Time taken " + sw.Elapsed.ToString("g");
+            return "Done" + (firstTry ? string.Empty : " with retry") + ". Time taken " + sw.Elapsed.ToString("g");
         }
     }    
 }

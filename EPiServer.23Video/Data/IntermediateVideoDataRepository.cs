@@ -106,6 +106,20 @@ namespace EPiCode.TwentyThreeVideo.Data
             return items;
         }
 
+        public bool TryLoadFromService(out List<BasicContent> list)
+        {
+            try
+            {
+                list = LoadFromService();
+                return true;
+            }
+            catch
+            {
+                list = default(List<BasicContent>);
+                return false;
+            }
+        }
+
         public List<BasicContent> LoadFromService()
         {
             try
