@@ -136,7 +136,7 @@ namespace EPiCode.TwentyThreeVideo.Data
 
                 if (options.MaxDegreeOfParallelism == 0)
                 {
-                    throw new OutOfRangePropertyValueException("23Video: MaxDegreeOfParallelism settings must be -1 or a positive number");
+                    throw new ArgumentOutOfRangeException("23Video: MaxDegreeOfParallelism settings must be -1 or a positive number");
                 }
 
                 Parallel.ForEach(videoFolders, options, folder =>
