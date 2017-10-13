@@ -29,6 +29,7 @@ namespace EPiCode.TwentyThreeVideo.Data
         protected Injected<IContentRepository> ContentRepositry { get; set; }
         protected Injected<ContentFactory> ContentFactory { get; set; }
         protected Injected<IContentTypeRepository> ContentTypeRepository { get; set; }
+        protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
         public static DynamicDataStore VideoContentDataModelStore
         {
@@ -114,11 +115,22 @@ namespace EPiCode.TwentyThreeVideo.Data
                 var videoContentList = videoFolders.ToList();
                 var videoHelper = new VideoHelper();
 
-                Parallel.ForEach(videoFolders, folder =>
+                var options = new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = SettingsRepository.Service.MaxDegreeOfParallelism
+                };
+
+                if (options.MaxDegreeOfParallelism == 0)
+                {
+                    throw new OutOfRangePropertyValueException("23Video: MaxDegreeOfParallelism settings must be -1 or a positive number");
+                }
+
+                Parallel.ForEach(videoFolders, options, folder =>
                 {
                     if (folder is VideoFolder)
                     {
                         var videos = TwentyThreeVideoRepository.GetVideoList(folder.ContentLink.ID);
+
                         foreach (var videoData in videos)
                         {
                             var type = ContentTypeRepository.Service.Load<Video>();

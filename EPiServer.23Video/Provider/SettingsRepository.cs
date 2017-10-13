@@ -104,6 +104,21 @@ namespace EPiCode.TwentyThreeVideo.Provider
             get { return GetAppSetting("TwentythreeVideoAccessTokenSecret"); }
         }
 
+        public int MaxDegreeOfParallelism
+        {
+            get
+            {
+                var value = GetAppSetting("TwentythreeVideoMaxDegreeOfParallelism");
+                int result;
+                if (int.TryParse(value, out result))
+                {
+                    return result;
+                }
+                //-1 is unlimited
+                return -1;
+            }
+        }
+
         public bool oEmbedIsEnabled
         {
             get
