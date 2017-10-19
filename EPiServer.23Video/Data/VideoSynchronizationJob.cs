@@ -41,7 +41,8 @@ namespace EPiCode.TwentyThreeVideo.Data
             sw.Start();
             OnStatusChanged("Starting execution of 23 video synchronization");
             var intermediateVideoDataRepository = new IntermediateVideoDataRepository();
-            var firstTry = intermediateVideoDataRepository.TryLoadFromService(out List<BasicContent> videoContent);
+            List<BasicContent> videoContent;
+            var firstTry = intermediateVideoDataRepository.TryLoadFromService(out videoContent);
             if (!firstTry)
             {
                 OnStatusChanged("Loading videos from 23 video failed. Retrying.");
