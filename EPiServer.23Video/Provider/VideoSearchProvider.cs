@@ -10,6 +10,9 @@ using EPiServer.Cms.Shell.Search;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.Framework.Localization;
+using EPiServer.Globalization;
+using EPiServer.ServiceLocation;
+using EPiServer.Shell;
 using EPiServer.Shell.Search;
 using EPiServer.Web;
 using EPiServer.Web.Routing;
@@ -19,8 +22,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
     [SearchProvider]
     public class VideoSearchProvider : ContentSearchProviderBase<BasicContent, ContentType>
     {
-        public VideoSearchProvider(LocalizationService localizationService, SiteDefinitionResolver siteDefinitionResolver, IContentTypeRepository contentTypeRepository,  EditUrlResolver editUrlResolver)
-            : base(localizationService, siteDefinitionResolver, contentTypeRepository,editUrlResolver)
+        public VideoSearchProvider(LocalizationService localizationService, ISiteDefinitionResolver siteDefinitionResolver, IContentTypeRepository contentTypeRepository,  EditUrlResolver editUrlResolver, ServiceAccessor<SiteDefinition> serviceAccessor, LanguageResolver languageResolver, UrlResolver urlResolver, TemplateResolver templateResolver, UIDescriptorRegistry uiDescriptorRegistry)
+            : base(localizationService, siteDefinitionResolver, contentTypeRepository,editUrlResolver, serviceAccessor, languageResolver, urlResolver, templateResolver, uiDescriptorRegistry)
         {
         }
 

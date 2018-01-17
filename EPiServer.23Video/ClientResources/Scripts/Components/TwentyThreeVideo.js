@@ -15,9 +15,9 @@ define([
     "dojo/topic",
 // epi-cms
     "twentythree/components/TwentyThreeVideoViewModel",
-    "epi-cms/widget/HierarchicalList",
+    "epi-cms/asset/HierarchicalList",
 // Resources
-    "epi/i18n!epi/cms/nls/episerver.cms.widget.hierachicallist",
+    "epi/i18n!epi/cms/nls/episerver.cms.asset.hierachicallist",
     "epi/i18n!epi/cms/nls/twentythreevideo.media"
 ],
 
