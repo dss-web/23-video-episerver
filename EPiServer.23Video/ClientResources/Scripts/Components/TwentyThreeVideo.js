@@ -17,7 +17,7 @@ define([
     "twentythree/components/TwentyThreeVideoViewModel",
     "epi-cms/asset/HierarchicalList",
 // Resources
-    "epi/i18n!epi/cms/nls/episerver.cms.asset.hierachicallist",
+    "epi/i18n!epi/cms/nls/episerver.cms.asset.hierarchicallist",
     "epi/i18n!epi/cms/nls/twentythreevideo.media"
 ],
 
@@ -32,7 +32,7 @@ function (
     on,
     topic,
 // epi
-    TwentyThreeVideoiewModel,
+    TwentyThreeVideoViewModel,
     HierarchicalList,
 // Resources
     hierarchicalListResources,
@@ -58,7 +58,7 @@ function (
         //      Flag to indicate this widget allowed to show create content area by default or not.
         showCreateContentArea: true,
 
-        modelClassName: TwentyThreeVideoiewModel,
+        modelClassName: TwentyThreeVideoViewModel,
 
         noDataMessage: resources.nocontent,
 
