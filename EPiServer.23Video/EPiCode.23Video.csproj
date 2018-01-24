@@ -217,15 +217,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="ClientResources\Scripts\Components\TwentyThreeVideo.js" />
-    <Content Include="ClientResources\Scripts\Components\TwentyThreeVideoViewModel.js" />
-    <None Include="ClientResources\module.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="EPiCode.23Video.Core.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="EPiCode.23Video.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
