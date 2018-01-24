@@ -32,7 +32,7 @@ define([
         "epi/shell/widget/dialog/Dialog",
 //command
     "epi-cms/asset/command/NewFolder",
-    "epi-cms/asset/command/RenameSelectedFolder",
+    "epi-cms/command/RenameFolder",
     "epi-cms/widget/CreateCommandsMixin",
     "epi-cms/command/NewContent",
     "epi-cms/command/CopyContent",
@@ -78,7 +78,7 @@ function (
     Dialog,
 //command
     NewFolderCommand,
-    RenameSelectedFolderCommand,
+    RenameFolderCommand,
     CreateCommandsMixin,
     NewContentCommand,
     CopyContentCommand,
@@ -478,7 +478,7 @@ function (
 
             var commands = {
                 rename: {
-                    command: new RenameSelectedFolderCommand({ category: "context" }),
+                    command: new RenameFolderCommand({ category: "context" }),
                     isAvailable: menuType.TREE,
                     order: 10
                 },
