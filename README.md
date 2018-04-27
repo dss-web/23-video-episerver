@@ -38,7 +38,7 @@ You'll need to add a few manual steps:
 3. Add controllers and views to display your videos! Examples are defined below:
 
 
-###Controllers
+### Controllers
 
 ```c#
 using System.Web.Mvc;
@@ -72,9 +72,9 @@ namespace EPiCode.TwentyThreeVideo.Controllers
 }
 ```
 
-###Views
+### Views
 
-#####Standard view:
+##### Standard view:
 
 ```c#
 @Model Models.Video
@@ -83,7 +83,7 @@ or
 @Html.Raw(Model.oEmbedHtml)
 ```
 
-#####DisplayTemplate:
+##### DisplayTemplate:
 
 ```c#
 @if (Model != null && Model != ContentReference.EmptyReference)
