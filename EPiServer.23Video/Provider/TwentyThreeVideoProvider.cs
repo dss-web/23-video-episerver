@@ -186,7 +186,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             {
                 ContentGuid = video.ContentGuid,
                 ContentReference = video.ContentLink,
-                ContentTypeID = ContentTypeRepository.Load(typeof(Video)).ID,
+                ContentTypeID = _contentTypeRepository.Load(typeof(Video)).ID,
             };
             return base.CreateContentResolveResult(contentItem);
         }
