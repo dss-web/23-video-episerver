@@ -155,3 +155,5 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 EPiServer.23Video/packages/
+
+EPiServer\.23Video/\.vs/EPiCode\.23Video/v15/Server/sqlite3/*
