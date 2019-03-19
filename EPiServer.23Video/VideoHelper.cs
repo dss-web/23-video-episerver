@@ -65,7 +65,7 @@ namespace EPiCode.TwentyThreeVideo
                                         item.One);
                             return false;
                         }
-                        video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                        video.oEmbedHtml = oEmbedCode;
                     }
                     PopulateStandardVideoProperties(video);
                 }
