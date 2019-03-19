@@ -38,7 +38,7 @@ namespace EPiCode.TwentyThreeVideo
             return video;
         }
 
-        public Video PopulateVideo(Video video, Photo item)
+        public bool PopulateVideo(Video video, Photo item)
         {
             if (item.PhotoId != null)
             {
@@ -57,7 +57,15 @@ namespace EPiCode.TwentyThreeVideo
                     video.PublishedIn23 = item.Published ?? false;
                     if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
                     {
-                        video.oEmbedHtml = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                        var oEmbedCode = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
+                        if (string.IsNullOrWhiteSpace(oEmbedCode))
+                        {
+                            _log.InfoFormat(
+                                    "23Video: 23Video returned empty oembed code. Videoname from 23Video {0}",
+                                        item.One);
+                            return false;
+                        }
+                        video.oEmbedHtml = oEmbedCode;
                     }
                     PopulateStandardVideoProperties(video);
                 }
@@ -68,7 +76,7 @@ namespace EPiCode.TwentyThreeVideo
                 }
                
             }
-            return video;
+            return true;
         }
 
         public static string EmbedCode(string photoId, string photoToken, int? width, int? height)

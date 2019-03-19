@@ -158,9 +158,16 @@ namespace EPiCode.TwentyThreeVideo.Data
                             if (video != null)
                             {
                                 _log.DebugFormat("23Video: Added video with name {0}", video.Name);
-                                videoHelper.PopulateVideo(video, videoData);
-
-                                videoContentList.Add(video);
+                                if (videoHelper.PopulateVideo(video, videoData))
+                                {
+                                    videoContentList.Add(video);
+                                }
+                                else
+                                {
+                                    _log.InfoFormat(
+                                        "23Video: Failed validation, skipping add. Videoname from 23Video {0}",
+                                        videoData.One);
+                                }
                             }
                             else
                             {
