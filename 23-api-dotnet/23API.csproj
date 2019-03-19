@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DE4C51D3-D764-410A-A34C-D6DA6EEAE35A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Visual</RootNamespace>
+    <AssemblyName>23API</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>23API.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DotNetOpenAuth">
+      <HintPath>DotNetOpenAuth\DotNetOpenAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Domain\Player.cs" />
+    <Compile Include="Implementations\PlayerService.cs" />
+    <Compile Include="Interfaces\IPlayerService.cs" />
+    <Compile Include="Interfaces\ICommentService.cs" />
+    <Compile Include="Implementations\ApiProvider.cs" />
+    <Compile Include="Interfaces\IApiProvider.cs" />
+    <Compile Include="Interfaces\IPhotoService.cs" />
+    <Compile Include="Interfaces\ISessionService.cs" />
+    <Compile Include="Interfaces\ISiteService.cs" />
+    <Compile Include="Interfaces\ITagService.cs" />
+    <Compile Include="Utilities\BoundaryAssertion.cs" />
+    <Compile Include="Implementations\CommentService.cs" />
+    <Compile Include="Domain\Photo.cs" />
+    <Compile Include="Interfaces\IAlbumService.cs" />
+    <Compile Include="Interfaces\IUserService.cs" />
+    <Compile Include="Parameters\PhotoList.cs" />
+    <Compile Include="Implementations\PhotoService.cs" />
+    <Compile Include="Implementations\UserService.cs" />
+    <Compile Include="Domain\Tag.cs" />
+    <Compile Include="Domain\User.cs" />
+    <Compile Include="Parameters\UserList.cs" />
+    <Compile Include="Parameters\TagList.cs" />
+    <Compile Include="Implementations\TagsService.cs" />
+    <Compile Include="Domain\Site.cs" />
+    <Compile Include="Implementations\SiteService.cs" />
+    <Compile Include="Domain\Album.cs" />
+    <Compile Include="Domain\Comment.cs" />
+    <Compile Include="Domain\Session.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Utilities\TwentyThreeCreatorRequestCreator.cs" />
+    <Compile Include="Utilities\Helpers.cs" />
+    <Compile Include="Utilities\InMemoryTokenManager.cs" />
+    <Compile Include="Parameters\CommentList.cs" />
+    <Compile Include="Parameters\Generic.cs" />
+    <Compile Include="Parameters\AlbumList.cs" />
+    <Compile Include="Implementations\AlbumService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Implementations\SessionService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="23API.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
