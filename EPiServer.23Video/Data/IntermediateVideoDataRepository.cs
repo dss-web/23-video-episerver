@@ -164,7 +164,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                                 }
                                 else
                                 {
-                                    _log.InfoFormat(
+                                    _log.WarnFormat(
                                         "23Video: Failed validation, skipping add. Videoname from 23Video {0}",
                                         videoData.One);
                                 }
