@@ -212,6 +212,8 @@ namespace EPiCode.TwentyThreeVideo.Data
                     model.VideoDownloadUrl = video.VideoDownloadUrl;
                     model.Id = video.Id;
                     model.VideoContentType = VideoContentType.Video;
+                    model.OriginalWidth = video.OriginalWidth;
+                    model.OriginalHeight = video.OriginalHeight;
                     yield return model;
                 }
                 else if(basicContent is VideoFolder)
@@ -267,6 +269,8 @@ namespace EPiCode.TwentyThreeVideo.Data
                     video.Thumbnail = dataModel.Thumbnail;
                     video.BinaryData = dataModel.Binarydata;
                     video.ContentGuid = dataModel.Guid;
+                    video.OriginalHeight = dataModel.OriginalHeight;
+                    video.OriginalWidth = dataModel.OriginalWidth;
                     helper.PopulateStandardVideoProperties(video);
                     yield return video;
                 }
