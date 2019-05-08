@@ -55,6 +55,8 @@ namespace EPiCode.TwentyThreeVideo
                     video.oEmbedVideoName = item.One;
                     video.VideoDownloadUrl = GetVideoDownloadUrl(item.VideoHD);
                     video.PublishedIn23 = item.Published ?? false;
+                    video.OriginalHeight = item.Original?.Height ?? 1;
+                    video.OriginalWidth = item.Original?.Width ?? 1;
                     if (SettingsRepository.Service.oEmbedIsEnabled && item.Published == true)
                     {
                         var oEmbedCode = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);

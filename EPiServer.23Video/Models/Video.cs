@@ -47,5 +47,10 @@ namespace EPiCode.TwentyThreeVideo.Models
         [Ignore]
         public virtual bool PublishedIn23 { get; set; }
         
+        [Ignore]
+        public virtual int OriginalWidth { get; set; }
+
+        [Ignore]
+        public virtual int OriginalHeight { get; set; }
     }
 }
