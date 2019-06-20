@@ -4,6 +4,7 @@
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,8 +40,13 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
         }
 
+        /// <param name="contents">Throws <see cref="ArgumentException"/> if it contains any null values</param>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="Exception" />
         public void Save(IEnumerable<BasicContent> contents)
         {
+            if (contents.Any(_ => _ == null))
+                throw new ArgumentException($"{nameof(contents)} contains a null value.");
             string serializedContents = string.Empty;
             try
             {
@@ -53,14 +59,19 @@ namespace EPiCode.TwentyThreeVideo.Data
                     LastUpdated = DateTime.Now
                 });
             }
+            catch (JsonException e)
+            {
+                _log.ErrorFormat("23Video: Serialization of videos failed with exception: {0}", e.Message);
+
+                throw new Exception("Serialization of videos failed.");
+            }
             catch (Exception e)
             {
-                
-                _log.ErrorFormat("IntermediateVideoDataRepository: Save failed with exception: {0}", e.Message);
-                
-                throw new Exception("Serialization of videos failed. Content from 23video may be corrupt. No changes was made to videos in Episerver.");
+                _log.ErrorFormat("23Video: Failed during save operation to DDS with exception: {0}", e.Message);
+
+                throw new Exception("Failed during save operation to DDS.");
             }
-           
+
         }
 
         public List<BasicContent> Load()
@@ -126,7 +137,7 @@ namespace EPiCode.TwentyThreeVideo.Data
             {
                 var entryPoint = ContentRepositry.Service.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
                 var videoFolders = CreateFoldersFromChannels(entryPoint).ToList();
-                var videoContentList = videoFolders.ToList();
+                var videoContentList = new ConcurrentBag<BasicContent>(videoFolders);
                 var videoHelper = new VideoHelper();
 
                 var options = new ParallelOptions
@@ -179,13 +190,13 @@ namespace EPiCode.TwentyThreeVideo.Data
                     }
                 }
                 );
-                return videoContentList;
+                return videoContentList.Where(_ => _ != null).ToList();
             }
             catch (Exception e)
             {
                 _log.ErrorFormat("23Video: LoadFromService: Could not load videos from service. Exception {0}", e.Message);
 
-                throw new Exception("Could not load videos from service. No changes was made to videos in Episerver");
+                throw new Exception("Could not load videos from service.");
             }
             
         }
