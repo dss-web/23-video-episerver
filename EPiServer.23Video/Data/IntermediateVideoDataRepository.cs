@@ -243,49 +243,50 @@ namespace EPiCode.TwentyThreeVideo.Data
             var entryPoint = ContentRepositry.Service.GetChildren<VideoFolder>(ContentReference.RootPage).FirstOrDefault();
             var videoType = ContentTypeRepository.Service.Load<Video>();
             var videoFolderType = ContentTypeRepository.Service.Load<VideoFolder>();
+            var videos = new List<Video>();
             var folders = new List<VideoFolder>();
             var rawcontents = dataModels as IList<IntermediateVideoDataModel> ?? dataModels.ToList();
-            foreach (IntermediateVideoDataModel dataModel in rawcontents)
+            foreach (IntermediateVideoDataModel dataModel in rawcontents.Where(_ => _.VideoContentType == VideoContentType.VideoFolder))
             {
-                if (dataModel.VideoContentType == VideoContentType.VideoFolder)
+                var folder = ContentFactory.Service.CreateContent(videoFolderType, new BuildingContext(videoFolderType)
                 {
-                    var folder = ContentFactory.Service.CreateContent(videoFolderType, new BuildingContext(videoFolderType)
-                              {
-                                  Parent = entryPoint,
-                                  LanguageSelector = LanguageSelector.AutoDetect(),
-                                  SetPropertyValues = true
-                              }) as VideoFolder;
-                    folder.Name = dataModel.Name;
-                    folder.EditorGroup = dataModel.EditorGroup;
-                    folder.ContentLink = dataModel.ContentLink;
-                    folder.ContentGuid = dataModel.Guid;
-                    folders.Add(folder);
-                    yield return folder;
-                }
-                else
-                {
-                    var video = ContentFactory.Service.CreateContent(videoType, new BuildingContext(videoType)
-                              {
-                                  Parent = folders.FirstOrDefault(x => x.ContentLink == dataModel.ParentLink),
-                                  LanguageSelector = LanguageSelector.AutoDetect(),
-                                  SetPropertyValues = true
-                              }) as Video;
-                    video.Id = dataModel.Id;
-                    video.ContentLink = dataModel.ContentLink;
-                    video.Name = dataModel.Name;
-                    video.oEmbedHtml = dataModel.oEmbedHtml;
-                    video.oEmbedVideoName = dataModel.oEmbedVideoName;
-                    video.VideoUrl = dataModel.VideoUrl;
-                    video.VideoDownloadUrl = dataModel.VideoDownloadUrl;
-                    video.Thumbnail = dataModel.Thumbnail;
-                    video.BinaryData = dataModel.Binarydata;
-                    video.ContentGuid = dataModel.Guid;
-                    video.OriginalHeight = dataModel.OriginalHeight;
-                    video.OriginalWidth = dataModel.OriginalWidth;
-                    helper.PopulateStandardVideoProperties(video);
-                    yield return video;
-                }
+                    Parent = entryPoint,
+                    LanguageSelector = LanguageSelector.AutoDetect(),
+                    SetPropertyValues = true
+                }) as VideoFolder;
+                folder.Name = dataModel.Name;
+                folder.EditorGroup = dataModel.EditorGroup;
+                folder.ContentLink = dataModel.ContentLink;
+                folder.ContentGuid = dataModel.Guid;
+                folders.Add(folder);
             }
+            foreach (IntermediateVideoDataModel dataModel in rawcontents.Where(_ => _.VideoContentType == VideoContentType.Video))
+            {
+                var video = ContentFactory.Service.CreateContent(videoType, new BuildingContext(videoType)
+                            {
+                                Parent = folders.FirstOrDefault(x => x.ContentLink == dataModel.ParentLink),
+                                LanguageSelector = LanguageSelector.AutoDetect(),
+                                SetPropertyValues = true
+                            }) as Video;
+                video.Id = dataModel.Id;
+                video.ContentLink = dataModel.ContentLink;
+                video.Name = dataModel.Name;
+                video.oEmbedHtml = dataModel.oEmbedHtml;
+                video.oEmbedVideoName = dataModel.oEmbedVideoName;
+                video.VideoUrl = dataModel.VideoUrl;
+                video.VideoDownloadUrl = dataModel.VideoDownloadUrl;
+                video.Thumbnail = dataModel.Thumbnail;
+                video.BinaryData = dataModel.Binarydata;
+                video.ContentGuid = dataModel.Guid;
+                video.OriginalHeight = dataModel.OriginalHeight;
+                video.OriginalWidth = dataModel.OriginalWidth;
+                helper.PopulateStandardVideoProperties(video);
+                videos.Add(video);
+            }
+            foreach (VideoFolder folder in folders)
+                yield return folder;
+            foreach (Video video in videos)
+                yield return video;
         }
 
         private IEnumerable<BasicContent> CreateFoldersFromChannels(VideoFolder entryPoint)
