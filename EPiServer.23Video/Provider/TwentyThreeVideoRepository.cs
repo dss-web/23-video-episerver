@@ -83,6 +83,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public static int? UploadVideo(string filename, Blob blob, int channel)
         {
             string fileExtention = Path.GetExtension(filename);
+            var title = Path.GetFileNameWithoutExtension(filename);
             if (fileExtention == null)
             {
                 // default extention if missing
@@ -93,7 +94,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 IPhotoService service = new PhotoService(Client.ApiProvider);
                 using (var stream = blob.OpenRead() as FileStream)
                 {
-                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: filename);
+                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: title);
                 }
             }
             catch (Exception ex)
