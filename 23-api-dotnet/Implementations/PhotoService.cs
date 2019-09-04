@@ -442,7 +442,7 @@ namespace Visual
             // Build request URL
             List<MultipartPostPart> data = new List<MultipartPostPart>
             {
-                MultipartPostPart.CreateFormFilePart("file", relativeFilename, fileContentType, filestream)
+                MultipartPostPart.CreateFormFilePart("file", HttpUtility.UrlEncode(relativeFilename), fileContentType, filestream)
             };
 
             if (userId != null) data.Add(MultipartPostPart.CreateFormPart("user_id", userId.ToString()));
