@@ -80,7 +80,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
         }
 
-        public static int? UploadVideo(string filename, Blob blob, int channel)
+        public static int? UploadVideo(string filename, Blob blob, int channel, int? userId = null)
         {
             string fileExtention = Path.GetExtension(filename);
             var title = Path.GetFileNameWithoutExtension(filename);
@@ -94,7 +94,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                 IPhotoService service = new PhotoService(Client.ApiProvider);
                 using (var stream = blob.OpenRead() as FileStream)
                 {
-                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: title);
+                    return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: title, userId: userId);
                 }
             }
             catch (Exception ex)
@@ -112,6 +112,15 @@ namespace EPiCode.TwentyThreeVideo.Provider
             // Get a list of videos to throw in there
             List<Album> albums = GetChannels(apiProvider);
             return albums;
+        }
+
+        public static List<User> SearchUsers(string term)
+        {
+            var service = new UserService(Client.ApiProvider);
+            return service.GetList(new UserListParameters
+            {
+                Search = term
+            });
         }
 
         private static List<Album> GetChannels(IApiProvider apiProvider)

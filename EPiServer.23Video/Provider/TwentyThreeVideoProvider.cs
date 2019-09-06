@@ -109,6 +109,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         public override ContentReference Save(IContent content, SaveAction action)
         {
             var helper = new VideoHelper();
+            int? currentUserId = GetCurrentUserId();
             var newVersion = content as Video;
 
             if (content.ContentLink.WorkID != 0)
@@ -118,7 +119,8 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     TwentyThreeVideoRepository.UpdateVideo(new Photo()
                     {
                         PhotoId = Convert.ToInt32(newVersion.Id),
-                        Title = newVersion.Name
+                        Title = newVersion.Name,
+                        UserId = currentUserId
                     });
                     newVersion.ContentLink = new ContentReference(int.Parse(newVersion.Id), 0, ProviderKey);
                     _intermediateVideoDataRepository.Update(newVersion);
@@ -146,7 +148,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
                     Blob blobData = ((MediaData)content).BinaryData;
                     try
                     {
-                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID);
+                        int? videoId = TwentyThreeVideoRepository.UploadVideo(content.Name, blobData, content.ParentLink.ID, currentUserId);
                         if (videoId != null)
                         {
 
@@ -178,6 +180,24 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             _items = items;
             ClearProviderPagesFromCache();
+        }
+
+        internal int? GetCurrentUserId()
+        {
+            try
+            {
+                var email = EPiServer.Personalization.EPiServerProfile.Current.Email;
+                if (string.IsNullOrEmpty(email))
+                    return null;
+                var users = TwentyThreeVideoRepository.SearchUsers(email);
+                if (users == null || users.Count == 0 || users.Count > 1)
+                    return null;
+                return users.First().UserId;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         protected ContentResolveResult ResolveContent(BasicContent video)
