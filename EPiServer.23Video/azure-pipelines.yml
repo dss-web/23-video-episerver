@@ -13,7 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  feedName: '$(feedName)'
+  pushFeedName: '$(feedName)'
 
 
 steps:
@@ -70,11 +70,4 @@ steps:
     command: push
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
     nuGetFeedType: 'internal'
-    publishVstsFeed: '$(feedName)'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: 'e0c75713-7999-4980-bdac-ecaaaa2d9946/8ef71b05-6e9f-422d-85b5-4c5a4113f967'
+    publishVstsFeed: '$(pushFeedName)'
