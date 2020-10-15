@@ -2,28 +2,27 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
+using Castle.Core.Internal;
+using EPiCode.TwentyThreeVideo.Models;
+using EPiCode.TwentyThreeVideo.Provider;
+using EPiServer.Core;
+using EPiServer.Core.Internal;
+using EPiServer.DataAnnotations;
+using EPiServer.Framework.Blobs;
+using EPiServer.Logging;
+using EPiServer.ServiceLocation;
 using System;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Castle.Core.Internal;
-using EPiCode.TwentyThreeVideo.Models;
-using EPiCode.TwentyThreeVideo.Provider;
-using EPiServer.Cms.Shell.UI.Controllers.Preview;
-using EPiServer.Core;
-using EPiServer.Core.Internal;
-using EPiServer.DataAnnotations;
-using EPiServer.Framework.Blobs;
-using EPiServer.ServiceLocation;
-using log4net;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo
 {
     public class VideoHelper
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILogger _log = LogManager.GetLogger();
         protected Injected<ThumbnailManager> ThumbnailManager { get; set; }
         protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
@@ -62,7 +61,7 @@ namespace EPiCode.TwentyThreeVideo
                         var oEmbedCode = TwentyThreeVideoRepository.GetoEmbedCodeForVideo(item.One);
                         if (string.IsNullOrWhiteSpace(oEmbedCode))
                         {
-                            _log.InfoFormat(
+                            _log.Information(
                                     "23Video: 23Video returned empty oembed code. Videoname from 23Video {0}",
                                         item.One);
                             return false;
@@ -73,10 +72,10 @@ namespace EPiCode.TwentyThreeVideo
                 }
                 catch (Exception e)
                 {
-                    _log.ErrorFormat("VideoHelper: PopulateVideo failed: VideoID: {0}, PhotoID: {1}, Exception: {2}", video != null && video.Id != null ? video.Id : "null", item != null && item.PhotoId != null ? item.PhotoId : 0, e.Message);
+                    _log.Error("VideoHelper: PopulateVideo failed: VideoID: {0}, PhotoID: {1}, Exception: {2}", video != null && video.Id != null ? video.Id : "null", item != null && item.PhotoId != null ? item.PhotoId : 0, e.Message);
                     throw;
                 }
-               
+
             }
             return true;
         }

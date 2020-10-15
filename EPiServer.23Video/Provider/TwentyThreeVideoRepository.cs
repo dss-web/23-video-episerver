@@ -2,14 +2,14 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
+using EPiCode.TwentyThreeVideo.oEmbed;
+using EPiServer.Framework.Blobs;
+using EPiServer.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
-using EPiCode.TwentyThreeVideo.oEmbed;
-using EPiServer.Framework.Blobs;
-using log4net;
 using Visual;
 using Visual.Domain;
 
@@ -17,7 +17,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 {
     public static class TwentyThreeVideoRepository
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILogger _log = LogManager.GetLogger();
 
         public static List<Photo> GetVideoList()
         {
@@ -59,10 +59,10 @@ namespace EPiCode.TwentyThreeVideo.Provider
             p.Video = true;
 
             var allPhotos = new List<Photo>();
-            var completed = false;            
+            var completed = false;
             while (!completed)
             {
-                var photos = photoService.GetList(p);                                
+                var photos = photoService.GetList(p);
                 allPhotos.AddRange(photos);
                 completed = photos.Count < p.Size;
                 p.PageOffset++;
@@ -76,7 +76,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
 
             if (service.Update((int)photo.PhotoId, title: photo.Title) == false)
             {
-                _log.ErrorFormat("23Video: Failed updating video with id {0}, title: {1}", photo.PhotoId, photo.Title);
+                _log.Error("23Video: Failed updating video with id {0}, title: {1}", photo.PhotoId, photo.Title);
             }
         }
 
@@ -147,7 +147,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             }
             catch (Exception exception)
             {
-                _log.WarnFormat("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
+                _log.Warning("23Video: Error getting oEmbed code for {0}, endpoint {1}. Exception was {2}", videoName, endpoint, exception);
             }
             return string.Empty;
         }
