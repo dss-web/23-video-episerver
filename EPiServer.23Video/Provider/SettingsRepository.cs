@@ -5,15 +5,16 @@ You should have received a copy of the GNU Lesser General Public License along w
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using EPiServer.Logging;
 using EPiServer.ServiceLocation;
-using log4net;
+
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     [ServiceConfiguration(ServiceType = typeof(SettingsRepository))]
     public class SettingsRepository
     {
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILogger Log = LogManager.GetLogger();
 
         public Settings LoadSettings()
         {

@@ -2,12 +2,6 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
-using System;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer;
@@ -17,15 +11,20 @@ using EPiServer.Core;
 using EPiServer.Data.Dynamic;
 using EPiServer.DataAbstraction;
 using EPiServer.ServiceLocation;
-using log4net;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EPiServer.Logging;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo.Data
 {
     public class IntermediateVideoDataRepository
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILogger _log = LogManager.GetLogger();
 
         protected Injected<IContentRepository> ContentRepositry { get; set; }
         protected Injected<ContentFactory> ContentFactory { get; set; }
@@ -61,13 +60,13 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
             catch (JsonException e)
             {
-                _log.ErrorFormat("23Video: Serialization of videos failed with exception: {0}", e.Message);
+                _log.Error("23Video: Serialization of videos failed with exception: {0}", e.Message);
 
                 throw new Exception("Serialization of videos failed.");
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("23Video: Failed during save operation to DDS with exception: {0}", e.Message);
+                _log.Error("23Video: Failed during save operation to DDS with exception: {0}", e.Message);
 
                 throw new Exception("Failed during save operation to DDS.");
             }
@@ -168,21 +167,21 @@ namespace EPiCode.TwentyThreeVideo.Data
                                 }) as Video;
                             if (video != null)
                             {
-                                _log.DebugFormat("23Video: Added video with name {0}", video.Name);
+                                _log.Debug("23Video: Added video with name {0}", video.Name);
                                 if (videoHelper.PopulateVideo(video, videoData))
                                 {
                                     videoContentList.Add(video);
                                 }
                                 else
                                 {
-                                    _log.WarnFormat(
+                                    _log.Warning(
                                         "23Video: Failed validation, skipping add. Videoname from 23Video {0}",
                                         videoData.One);
                                 }
                             }
                             else
                             {
-                                _log.InfoFormat(
+                                _log.Information(
                                     "23Video: Video from 23Video can not be loaded in EPiServer as Video. Videoname from 23Video {0}",
                                     videoData.One);
                             }
@@ -194,11 +193,11 @@ namespace EPiCode.TwentyThreeVideo.Data
             }
             catch (Exception e)
             {
-                _log.ErrorFormat("23Video: LoadFromService: Could not load videos from service. Exception {0}", e.Message);
+                _log.Error("23Video: LoadFromService: Could not load videos from service. Exception {0}", e.Message);
 
                 throw new Exception("Could not load videos from service.");
             }
-            
+
         }
 
         public IEnumerable<IntermediateVideoDataModel> ConvertFromBasicContent(IEnumerable<BasicContent> contents)
@@ -227,7 +226,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                     model.OriginalHeight = video.OriginalHeight;
                     yield return model;
                 }
-                else if(basicContent is VideoFolder)
+                else if (basicContent is VideoFolder)
                 {
                     var videoFolder = basicContent as VideoFolder;
                     model.EditorGroup = videoFolder.EditorGroup;
@@ -263,11 +262,11 @@ namespace EPiCode.TwentyThreeVideo.Data
             foreach (IntermediateVideoDataModel dataModel in rawcontents.Where(_ => _.VideoContentType == VideoContentType.Video))
             {
                 var video = ContentFactory.Service.CreateContent(videoType, new BuildingContext(videoType)
-                            {
-                                Parent = folders.FirstOrDefault(x => x.ContentLink == dataModel.ParentLink),
-                                LanguageSelector = LanguageSelector.AutoDetect(),
-                                SetPropertyValues = true
-                            }) as Video;
+                {
+                    Parent = folders.FirstOrDefault(x => x.ContentLink == dataModel.ParentLink),
+                    LanguageSelector = LanguageSelector.AutoDetect(),
+                    SetPropertyValues = true
+                }) as Video;
                 video.Id = dataModel.Id;
                 video.ContentLink = dataModel.ContentLink;
                 video.Name = dataModel.Name;
@@ -301,7 +300,7 @@ namespace EPiCode.TwentyThreeVideo.Data
                     LanguageSelector = LanguageSelector.AutoDetect(),
                     SetPropertyValues = true
                 }) as VideoFolder;
-                if (folder == null) continue;                
+                if (folder == null) continue;
                 if (album.AlbumId != null)
                 {
                     var id = (int)album.AlbumId;
@@ -309,10 +308,10 @@ namespace EPiCode.TwentyThreeVideo.Data
                     folder.Name = album.Title;
 
                     var editorGroup = new EditorGroupChannelMappingRepository().GetEditorGroupForChannel(folder.Name);
-                    if(!string.IsNullOrWhiteSpace(editorGroup))
+                    if (!string.IsNullOrWhiteSpace(editorGroup))
                         folder.EditorGroup = editorGroup;
-                    
-                    _log.InfoFormat("23Video: Channel {0} created.", album.Title);
+
+                    _log.Information("23Video: Channel {0} created.", album.Title);
                     yield return folder;
                 }
             }

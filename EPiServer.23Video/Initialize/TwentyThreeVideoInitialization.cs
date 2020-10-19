@@ -2,27 +2,26 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
-using System;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using EPiCode.TwentyThreeVideo.Data;
+using EPiCode.TwentyThreeVideo.Models;
 using EPiCode.TwentyThreeVideo.Provider;
 using EPiServer;
 using EPiServer.Configuration;
 using EPiServer.Core;
 using EPiServer.Data;
 using EPiServer.DataAbstraction;
-using EPiServer.DataAbstraction.RuntimeModel;
 using EPiServer.DataAccess;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.Security;
 using EPiServer.ServiceLocation;
-using EPiCode.TwentyThreeVideo.Models;
-using EPiServer.DataAbstraction.RuntimeModel.Internal;
-using log4net;
+using System;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using EPiServer.Logging;
+
 
 namespace EPiCode.TwentyThreeVideo.Initialize
 {
@@ -30,7 +29,8 @@ namespace EPiCode.TwentyThreeVideo.Initialize
     [ModuleDependency(typeof(DataInitialization))]
     public class TwentyThreeVideoInitialization : IInitializableModule
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        
+        private static readonly ILogger _log = LogManager.GetLogger();
         protected Injected<SettingsRepository> SettingsRepository { get; set; }
 
         public void Initialize(InitializationEngine context)

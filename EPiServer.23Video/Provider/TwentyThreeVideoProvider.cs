@@ -2,25 +2,25 @@
 23 Video content provider for EPiServer is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 23 Video content provider for EPiServer is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with 23 Video content provider for EPiServer. If not, see http://www.gnu.org/licenses/. */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using EPiCode.TwentyThreeVideo.Data;
 using EPiCode.TwentyThreeVideo.Models;
 using EPiServer.Core;
 using EPiServer.DataAbstraction;
 using EPiServer.DataAccess;
 using EPiServer.Framework.Blobs;
+using EPiServer.Logging;
 using EPiServer.ServiceLocation;
 using EPiServer.Web;
-using log4net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Visual.Domain;
 
 namespace EPiCode.TwentyThreeVideo.Provider
 {
     public class TwentyThreeVideoProvider : ContentProvider
     {
-        private static ILog _log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILogger _log = LogManager.GetLogger();
 
         private List<BasicContent> _items = new List<BasicContent>();
         private readonly IContentTypeRepository _contentTypeRepository;
@@ -63,7 +63,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
         {
             if (_items == null)
             {
-                _log.InfoFormat("23Video: _items is null when resolving content with it {0}. Return null", contentLink.ID);
+                _log.Information("23Video: _items is null when resolving content with it {0}. Return null", contentLink.ID);
                 return null;
             }
 
