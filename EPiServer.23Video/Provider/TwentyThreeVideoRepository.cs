@@ -92,7 +92,7 @@ namespace EPiCode.TwentyThreeVideo.Provider
             try
             {
                 IPhotoService service = new PhotoService(Client.ApiProvider);
-                using (var stream = blob.OpenRead() as FileStream)
+                using (var stream = blob.OpenRead())
                 {
                     return service.Upload(filename, fileExtention.TrimStart('.'), stream, albumId: channel, title: title, userId: userId);
                 }
