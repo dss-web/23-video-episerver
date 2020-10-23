@@ -157,3 +157,4 @@ $RECYCLE.BIN/
 EPiServer.23Video/packages/
 
 EPiServer\.23Video/\.vs/EPiCode\.23Video/v15/Server/sqlite3/*
+.vs
